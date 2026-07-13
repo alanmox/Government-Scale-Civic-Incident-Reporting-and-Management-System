@@ -88,7 +88,12 @@ final class AssignmentController extends BaseController
                 $comments
             );
 
-            $this->redirectWithSuccess('/assignments', 'Incident successfully assigned to officer.');
+            // Phase 4 integration: Create a Work Order for the officer
+            $woRepo = new \App\Repositories\WorkOrderRepository();
+            $woService = new \App\Services\WorkOrderService($woRepo, $this->incidentRepo, $this->workflow);
+            $woService->createFromIncident($incidentUuid, $officerUuid, ['description' => $comments]);
+
+            $this->redirectWithSuccess('/assignments', 'Incident successfully assigned to officer and Work Order generated.');
 
         } catch (ValidationException $e) {
             $this->redirectWithError('/assignments', current($e->getErrors())[0]);
