@@ -49,4 +49,10 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
 
     // [Phase 1+] Additional routes added here as modules are built:
     // Incidents, Profile, Admin, Reports, etc.
+    
+    // Incidents
+    $router->get('/incidents/create', [App\Controllers\IncidentController::class, 'create']);
+    $router->post('/incidents', [App\Controllers\IncidentController::class, 'store'], [CsrfMiddleware::class]);
+    $router->get('/incidents/my', [App\Controllers\IncidentController::class, 'indexMy']);
+    $router->get('/incidents/{id}', [App\Controllers\IncidentController::class, 'show']);
 });
