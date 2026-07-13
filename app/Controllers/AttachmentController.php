@@ -53,6 +53,6 @@ final class AttachmentController extends BaseController
         }
 
         // Output file
-        $this->response->download($absolutePath, $attachment['original_name'], $attachment['mime_type']);
+        $this->response->download($absolutePath, $attachment['original_name']);
     }
 }

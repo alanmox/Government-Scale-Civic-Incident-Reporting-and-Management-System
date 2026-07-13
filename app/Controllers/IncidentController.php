@@ -73,6 +73,35 @@ final class IncidentController extends BaseController
             
             $incident = $this->incidentService->reportIncident($data, $userId);
             
+            // Phase 5: Process Attachments
+            if (!empty($_FILES['attachments']['name'][0])) {
+                $fileService = new \App\Services\FileUploadService();
+                $attRepo = new \App\Repositories\AttachmentRepository();
+                
+                try {
+                    $uploadedFiles = $fileService->handleUpload($_FILES['attachments']);
+                    
+                    foreach ($uploadedFiles as $fileData) {
+                        $attRepo->create([
+                            'id'            => \App\Utilities\UUIDHelper::toBinary(\App\Utilities\UUIDHelper::generate()),
+                            'entity_type'   => 'incident',
+                            'entity_id'     => \App\Utilities\UUIDHelper::toBinary($incident->getUuid()),
+                            'uploader_id'   => \App\Utilities\UUIDHelper::toBinary($userId),
+                            'original_name' => $fileData['original_name'],
+                            'stored_name'   => $fileData['stored_name'],
+                            'file_path'     => $fileData['file_path'],
+                            'mime_type'     => $fileData['mime_type'],
+                            'file_size'     => $fileData['file_size'],
+                            'is_image'      => $fileData['is_image'] ? 1 : 0
+                        ]);
+                    }
+                } catch (\App\Exceptions\FileUploadException $fe) {
+                    // Log but don't fail the whole incident creation if upload fails
+                    error_log("Attachment Error for Incident {$incident->getReferenceNumber()}: " . $fe->getMessage());
+                    $this->session->flash('errors', ['attachments' => [$fe->getMessage()]]);
+                }
+            }
+            
             $this->redirectWithSuccess('/incidents/my', __('incident.submitted', ['number' => $incident->getReferenceNumber()]));
             
         } catch (ValidationException $e) {

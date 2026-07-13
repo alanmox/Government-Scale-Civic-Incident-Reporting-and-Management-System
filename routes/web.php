@@ -68,4 +68,7 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     $router->get('/work-orders', [App\Controllers\WorkOrderController::class, 'index']);
     $router->get('/work-orders/{id}', [App\Controllers\WorkOrderController::class, 'show']);
     $router->post('/work-orders/{id}/progress', [App\Controllers\WorkOrderController::class, 'updateProgress'], [CsrfMiddleware::class]);
+
+    // Secure Attachments
+    $router->get('/attachments/{id}', [App\Controllers\AttachmentController::class, 'download']);
 });
