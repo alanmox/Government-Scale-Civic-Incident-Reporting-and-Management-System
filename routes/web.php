@@ -63,4 +63,9 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     // Assignment (Supervisors/Admins)
     $router->get('/assignments', [App\Controllers\AssignmentController::class, 'index']);
     $router->post('/assignments/assign', [App\Controllers\AssignmentController::class, 'assign'], [CsrfMiddleware::class]);
+
+    // Work Orders (Officers)
+    $router->get('/work-orders', [App\Controllers\WorkOrderController::class, 'index']);
+    $router->get('/work-orders/{id}', [App\Controllers\WorkOrderController::class, 'show']);
+    $router->post('/work-orders/{id}/progress', [App\Controllers\WorkOrderController::class, 'updateProgress'], [CsrfMiddleware::class]);
 });
