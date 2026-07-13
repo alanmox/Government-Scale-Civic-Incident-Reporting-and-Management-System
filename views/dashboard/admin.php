@@ -66,7 +66,11 @@
             <div class="card-header"><i class="bi bi-gear"></i> Administration Links</div>
             <div class="card-body">
                 <div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
+                    <a href="<?= url('reports/export-incidents') ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center text-primary fw-bold">
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export All Incidents (CSV)
+                        <i class="bi bi-download"></i>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled mt-2">
                         User Management <span class="badge bg-secondary rounded-pill">Phase 9</span>
                     </a>
                     <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
@@ -74,9 +78,6 @@
                     </a>
                     <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
                         System Configuration <span class="badge bg-secondary rounded-pill">Phase 9</span>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
-                        Audit Logs <span class="badge bg-secondary rounded-pill">Phase 9</span>
                     </a>
                 </div>
             </div>

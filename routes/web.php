@@ -71,4 +71,8 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
 
     // Secure Attachments
     $router->get('/attachments/{id}', [App\Controllers\AttachmentController::class, 'download']);
+
+    // Reports and Exports
+    $router->get('/reports/export-incidents', [App\Controllers\ReportController::class, 'exportCsv']);
+    $router->get('/incidents/{id}/receipt', [App\Controllers\ReportController::class, 'downloadReceipt']);
 });
