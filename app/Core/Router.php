@@ -40,28 +40,28 @@ final class Router
     }
 
     // ── Route Registration ─────────────────────────────────────────────────────
-
-    public function get(string $path, array $handler, array $middleware = []): self
+    
+    public function get(string $path, array|callable $handler, array $middleware = []): self
     {
         return $this->addRoute('GET', $path, $handler, $middleware);
     }
-
-    public function post(string $path, array $handler, array $middleware = []): self
+    
+    public function post(string $path, array|callable $handler, array $middleware = []): self
     {
         return $this->addRoute('POST', $path, $handler, $middleware);
     }
-
-    public function put(string $path, array $handler, array $middleware = []): self
+    
+    public function put(string $path, array|callable $handler, array $middleware = []): self
     {
         return $this->addRoute('PUT', $path, $handler, $middleware);
     }
-
-    public function patch(string $path, array $handler, array $middleware = []): self
+    
+    public function patch(string $path, array|callable $handler, array $middleware = []): self
     {
         return $this->addRoute('PATCH', $path, $handler, $middleware);
     }
-
-    public function delete(string $path, array $handler, array $middleware = []): self
+    
+    public function delete(string $path, array|callable $handler, array $middleware = []): self
     {
         return $this->addRoute('DELETE', $path, $handler, $middleware);
     }
@@ -117,7 +117,7 @@ final class Router
 
     // ── Private Internals ──────────────────────────────────────────────────────
 
-    private function addRoute(string $method, string $path, array $handler, array $middleware): self
+    private function addRoute(string $method, string $path, array|callable $handler, array $middleware): self
     {
         $this->routes[$method][] = [
             'pattern'    => $this->prefix . $path,
@@ -159,11 +159,11 @@ final class Router
      * Builds the middleware pipeline and executes it, terminating with the controller action.
      *
      * @param string[]           $middlewareList
-     * @param array{string, string} $handler
+     * @param array{string, string}|callable $handler
      *
      * @throws AppException
      */
-    private function runPipeline(array $middlewareList, array $handler): void
+    private function runPipeline(array $middlewareList, array|callable $handler): void
     {
         $pipeline = new Pipeline($this->request, $this->response);
 
@@ -180,14 +180,19 @@ final class Router
     }
 
     /**
-     * Instantiates the controller and calls the specified action method.
+     * Instantiates the controller and calls the specified action method, or executes a closure.
      *
-     * @param array{string, string} $handler [ControllerClass, method]
+     * @param array{string, string}|callable $handler [ControllerClass, method] or Closure
      *
      * @throws AppException
      */
-    private function callController(array $handler): void
+    private function callController(array|callable $handler): void
     {
+        if (is_callable($handler)) {
+            call_user_func($handler);
+            return;
+        }
+
         [$class, $method] = $handler;
 
         if (!class_exists($class)) {
