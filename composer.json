@@ -1,0 +1,49 @@
+{
+    "name": "gcirms/gcirms",
+    "description": "Government-Scale Civic Incident Reporting and Management System",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "GCIRMS Development Team",
+            "email": "dev@gcirms.go.tz"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "vlucas/phpdotenv": "^5.6",
+        "monolog/monolog": "^3.7",
+        "ramsey/uuid": "^4.7",
+        "phpmailer/phpmailer": "^6.9",
+        "tecnickcom/tcpdf": "^6.7",
+        "phpoffice/phpspreadsheet": "^2.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Helpers/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --configuration phpunit.xml",
+        "migrate": "php database/migrate.php",
+        "seed": "php database/seed.php"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
