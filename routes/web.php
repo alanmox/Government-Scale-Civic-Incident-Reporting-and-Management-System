@@ -59,4 +59,8 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     // Verification Queue (Officers)
     $router->get('/verification', [App\Controllers\VerificationController::class, 'queue']);
     $router->post('/verification/process', [App\Controllers\VerificationController::class, 'process'], [CsrfMiddleware::class]);
+
+    // Assignment (Supervisors/Admins)
+    $router->get('/assignments', [App\Controllers\AssignmentController::class, 'index']);
+    $router->post('/assignments/assign', [App\Controllers\AssignmentController::class, 'assign'], [CsrfMiddleware::class]);
 });
