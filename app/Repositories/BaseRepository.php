@@ -36,6 +36,11 @@ abstract class BaseRepository implements RepositoryInterface
         $this->pdo = Connection::getInstance()->getPdo();
     }
 
+    public function getConnection(): PDO
+    {
+        return $this->pdo;
+    }
+
     // ── RepositoryInterface Implementation ─────────────────────────────────────
 
     /**

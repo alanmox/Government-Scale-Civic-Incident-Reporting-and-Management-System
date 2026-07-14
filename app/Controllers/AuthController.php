@@ -63,9 +63,10 @@ final class AuthController extends BaseController
             $this->redirect($intended);
 
         } catch (AuthenticationException $e) {
+            error_log('[AUTH DEBUG] AuthenticationException: ' . $e->getMessage());
             $this->redirectWithError('/login', $e->getMessage());
         } catch (\Throwable $e) {
-            error_log($e->getMessage());
+            error_log('[AUTH DEBUG] Throwable: ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             $this->redirectWithError('/login', __('error.500_message'));
         }
     }

@@ -34,7 +34,10 @@ final class AuthService extends BaseService
      */
     public function login(string $identifier, string $password, string $ip, string $userAgent): User
     {
+        error_log('[AUTH DEBUG] Starting login for: ' . $identifier);
+        
         $userData = $this->userRepo->findByEmailOrUsername($identifier);
+        error_log('[AUTH DEBUG] find result: ' . ($userData ? 'FOUND' : 'NOT FOUND'));
 
         if (!$userData) {
             $this->logFailure(null, $ip, $userAgent, 'user_not_found');
@@ -43,6 +46,7 @@ final class AuthService extends BaseService
 
         $user = new User($userData);
         $userId = $user->getId();
+        error_log('[AUTH DEBUG] User ID (hex): ' . bin2hex($userId));
 
         // Check if locked
         if ($user->isLockedOut()) {
@@ -51,7 +55,10 @@ final class AuthService extends BaseService
         }
 
         // Verify password
-        if (!PasswordHasher::verify($password, $userData['password_hash'])) {
+        $passOk = PasswordHasher::verify($password, $userData['password_hash']);
+        error_log('[AUTH DEBUG] Password verify: ' . ($passOk ? 'OK' : 'FAIL'));
+        
+        if (!$passOk) {
             $attempts = $this->userRepo->incrementFailedAttempts($userId);
             
             $maxAttempts = (int) config('app.password.max_attempts', 5);
@@ -73,6 +80,8 @@ final class AuthService extends BaseService
         }
 
         // Success!
+        error_log('[AUTH DEBUG] Login successful, initializing session...');
+        
         $this->userRepo->resetFailedAttempts($userId);
         $this->userRepo->recordLogin($userId, $ip);
 
@@ -101,6 +110,7 @@ final class AuthService extends BaseService
         $roles = $this->userRepo->findUserRoles($userId);
         $roleId = $roles[0]['id'] ?? null; // Primary role
         $roleName = $roles[0]['name'] ?? 'User';
+        $roleSlug = $roles[0]['slug'] ?? 'user';
 
         $permissions = [];
         if ($user instanceof SuperAdmin) {
@@ -111,12 +121,14 @@ final class AuthService extends BaseService
         }
 
         $this->session->login($userId, $roleId ?? '', [
+            'user_role'   => $roleSlug,
             'permissions' => $permissions,
             'user_info'   => [
                 'name'   => $user->getFullName(),
                 'email'  => $user->getEmail(),
                 'avatar' => $user->getProfilePhotoUrl(),
-                'role'   => $roleName
+                'role'   => $roleName,
+                'slug'   => $roleSlug,
             ]
         ]);
     }
