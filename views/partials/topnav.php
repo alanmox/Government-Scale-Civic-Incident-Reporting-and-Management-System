@@ -36,13 +36,27 @@ $unreadNotifications = $session->get('unread_notifications', 0);
     <!-- Actions -->
     <div class="topnav-actions">
 
+        <!-- Language Toggle -->
+        <div class="dropdown">
+            <button class="topnav-btn" data-bs-toggle="dropdown" aria-label="Language" title="Switch Language">
+                <i class="bi bi-translate"></i>
+                <span class="d-none d-md-inline" style="font-size:.75rem;font-weight:600;"><?= strtoupper($_SESSION['locale'] ?? 'EN') ?></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" style="min-width:140px;font-size:.85rem;">
+                <li><a class="dropdown-item <?= ($_SESSION['locale'] ?? 'en') === 'en' ? 'active' : '' ?>" href="<?= url('locale/en') ?>">
+                    🇬🇧 &nbsp;English
+                </a></li>
+                <li><a class="dropdown-item <?= ($_SESSION['locale'] ?? 'en') === 'sw' ? 'active' : '' ?>" href="<?= url('locale/sw') ?>">
+                    🇹🇿 &nbsp;Kiswahili
+                </a></li>
+            </ul>
+        </div>
+
         <!-- Notifications -->
         <div class="dropdown">
-            <button class="topnav-btn" data-bs-toggle="dropdown" aria-label="Notifications">
+            <button class="topnav-btn" data-bs-toggle="dropdown" aria-label="Notifications" id="notif-btn">
                 <i class="bi bi-bell"></i>
-                <?php if ($unreadNotifications > 0): ?>
-                    <span class="badge-dot"></span>
-                <?php endif; ?>
+                <span id="notif-badge" class="<?= $unreadNotifications > 0 ? 'badge-dot' : 'd-none' ?>"></span>
             </button>
             <div class="dropdown-menu dropdown-menu-end notification-dropdown p-0 shadow-lg">
                 <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">

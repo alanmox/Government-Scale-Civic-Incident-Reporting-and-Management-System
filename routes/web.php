@@ -80,5 +80,53 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
 
     // Reports and Exports
     $router->get('/reports/export-incidents', [App\Controllers\ReportController::class, 'exportCsv']);
-    $router->get('/incidents/{id}/receipt', [App\Controllers\ReportController::class, 'downloadReceipt']);
+    $router->get('/incidents/{id}/receipt',   [App\Controllers\ReportController::class, 'downloadReceipt']);
+
+    // ── SPRINT 1: New Navigation Routes ───────────────────────────────────────
+
+    // Analytics & KPIs
+    $router->get('/analytics', [App\Controllers\AnalyticsController::class, 'index']);
+
+    // Escalations
+    $router->get('/escalations', [App\Controllers\EscalationController::class, 'index']);
+
+    // National Incident Map
+    $router->get('/map', [App\Controllers\MapController::class, 'index']);
+
+    // Admin Audit Logs (live)
+    $router->get('/admin/audit-logs', [App\Controllers\AuditLogController::class, 'index']);
+
+    // Admin SLA Management (stub — Phase 9)
+    $router->get('/admin/sla', [App\Controllers\AdminController::class, 'sla']);
+
+    // Admin System Backup (stub — Phase 9)
+    $router->get('/admin/backup', [App\Controllers\AdminController::class, 'backup']);
+
+    // Citizen — Incident Drafts
+    $router->get('/incidents/drafts', [App\Controllers\IncidentController::class, 'drafts']);
+
+    // Citizen — Bookmarks
+    $router->get('/bookmarks', [App\Controllers\CitizenController::class, 'bookmarks']);
+
+    // Citizen — Updates Inbox
+    $router->get('/updates', [App\Controllers\CitizenController::class, 'updates']);
+
+    // Citizen — My Impact
+    $router->get('/my-impact', [App\Controllers\CitizenController::class, 'impact']);
+
+    // Citizen — Alert/Notification Settings
+    $router->get('/notification-settings',       [App\Controllers\CitizenController::class, 'notificationSettings']);
+    $router->post('/notification-settings/save', [App\Controllers\CitizenController::class, 'notificationSettings'], [CsrfMiddleware::class]);
+});
+
+// ── Locale Switcher (public — no auth needed) ──────────────────────────────────
+$router->get('/locale/{code}', function () {
+    $code = $_SERVER['REQUEST_URI'];
+    preg_match('/\/locale\/([a-z]{2})/', $code, $m);
+    $allowed = ['en', 'sw'];
+    if (isset($m[1]) && in_array($m[1], $allowed, true)) {
+        $_SESSION['locale'] = $m[1];
+    }
+    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+    exit;
 });

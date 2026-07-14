@@ -32,6 +32,9 @@
     <!-- Main Content -->
     <main class="main-content" id="main-content">
 
+        <!-- Breadcrumbs -->
+        <?php require VIEWS_PATH . '/partials/breadcrumbs.php'; ?>
+
         <!-- Breadcrumb + Page Header -->
         <?php if (isset($pageTitle)): ?>
         <div class="page-header">
