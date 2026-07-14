@@ -98,9 +98,13 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
 
     // Admin SLA Management (stub — Phase 9)
     $router->get('/admin/sla', [App\Controllers\AdminController::class, 'sla']);
+    $router->post('/admin/sla', [App\Controllers\AdminController::class, 'storeSla']);
+    $router->post('/admin/sla/delete', [App\Controllers\AdminController::class, 'deleteSla']);
 
-    // Admin System Backup (stub — Phase 9)
+    // Admin System Backup (Phase 9)
     $router->get('/admin/backup', [App\Controllers\AdminController::class, 'backup']);
+    $router->post('/admin/backup/create', [App\Controllers\AdminController::class, 'createBackup']);
+    $router->get('/admin/backup/download', [App\Controllers\AdminController::class, 'downloadBackup']);
 
     // Citizen — Incident Drafts
     $router->get('/incidents/drafts', [App\Controllers\IncidentController::class, 'drafts']);
