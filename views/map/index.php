@@ -6,8 +6,8 @@
         <div class="d-flex gap-2 align-items-center" style="font-size:.8rem;">
             <span class="badge bg-danger">Critical</span>
             <span class="badge bg-warning text-dark">High</span>
-            <span class="badge bg-info text-dark">Medium</span>
-            <span class="badge bg-secondary">Low</span>
+            <span class="badge bg-warning text-dark">Medium</span>
+            <span class="badge bg-primary">Low</span>
         </div>
     </div>
     <div id="incident-map" style="height:65vh; width:100%;"></div>
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }).addTo(map);
 
     const incidents = <?= json_encode($incidents) ?>;
-    const priorityColors = { critical: '#dc3545', high: '#ffc107', medium: '#17a2b8', low: '#6c757d' };
+    const priorityColors = { critical: '#dc3545', high: '#F5A623', medium: '#F5A623', low: '#1B4D3E' };
 
     incidents.forEach(inc => {
         if (!inc.latitude || !inc.longitude) return;

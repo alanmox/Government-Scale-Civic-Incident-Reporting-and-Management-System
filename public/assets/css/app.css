@@ -7,15 +7,15 @@
 
 /* ── CSS Variables ─────────────────────────────────────────── */
 :root {
-  --primary:        #1a3a6b;
-  --primary-dark:   #0f2347;
-  --primary-light:  #2a5298;
+  --primary:        #1B4D3E;
+  --primary-dark:   #12362b;
+  --primary-light:  #246652;
   --secondary:      #28a745;
-  --warning:        #fd7e14;
+  --warning:        #F5A623;
   --danger:         #dc3545;
   --info:           #17a2b8;
   --success:        #28a745;
-  --bg:             #f0f2f5;
+  --bg:             #F4F7F6;
   --card:           #ffffff;
   --text:           #2d3748;
   --text-muted:     #718096;
@@ -146,8 +146,8 @@ body {
   left: 0;
   width: var(--sidebar-width);
   height: calc(100vh - var(--topnav-height));
-  background: #fff;
-  border-right: 1px solid var(--border);
+  background: var(--primary); /* Deep Civic Green */
+  border-right: none;
   overflow-y: auto;
   z-index: 1030;
   transition: transform 0.3s ease;
@@ -155,14 +155,14 @@ body {
 }
 
 .sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 4px; }
 
 .sidebar-section-label {
   font-size: .68rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .8px;
-  color: var(--text-muted);
+  color: rgba(255,255,255,.6);
   padding: 1.25rem 1.25rem .4rem;
 }
 
@@ -171,7 +171,7 @@ body {
   align-items: center;
   gap: .75rem;
   padding: .6rem 1.25rem;
-  color: var(--text);
+  color: rgba(255,255,255,.8);
   text-decoration: none;
   font-size: .875rem;
   font-weight: 500;
@@ -182,20 +182,21 @@ body {
   background: transparent;
   width: 100%;
   text-align: left;
+  border-left: 3px solid transparent;
 }
 
-.sidebar-item i { font-size: 1rem; width: 20px; color: var(--text-muted); }
-.sidebar-item:hover { background: #f7f9fc; color: var(--primary); }
-.sidebar-item:hover i { color: var(--primary); }
+.sidebar-item i { font-size: 1rem; width: 20px; color: rgba(255,255,255,.6); }
+.sidebar-item:hover { background: rgba(255,255,255,.05); color: #fff; border-left: 3px solid var(--warning); }
+.sidebar-item:hover i { color: #fff; }
 
 .sidebar-item.active {
-  background: rgba(26, 58, 107, .08);
-  color: var(--primary);
+  background: rgba(255,255,255,.1);
+  color: #fff;
   font-weight: 600;
-  border-right: 3px solid var(--primary);
+  border-left: 3px solid var(--warning);
 }
 
-.sidebar-item.active i { color: var(--primary); }
+.sidebar-item.active i { color: #fff; }
 
 .sidebar-badge {
   margin-left: auto;
@@ -279,9 +280,9 @@ body {
   flex-shrink: 0;
 }
 
-.stat-icon.primary   { background: rgba(26,58,107,.1);  color: var(--primary); }
+.stat-icon.primary   { background: rgba(27,77,62,.1);  color: var(--primary); }
 .stat-icon.success   { background: rgba(40,167,69,.1);  color: var(--success); }
-.stat-icon.warning   { background: rgba(253,126,20,.1); color: var(--warning); }
+.stat-icon.warning   { background: rgba(245,166,35,.1); color: var(--warning); }
 .stat-icon.danger    { background: rgba(220,53,69,.1);  color: var(--danger); }
 .stat-icon.info      { background: rgba(23,162,184,.1); color: var(--info); }
 
@@ -359,7 +360,7 @@ body {
 
 .form-control:focus, .form-select:focus {
   border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(26,58,107,.12);
+  box-shadow: 0 0 0 3px rgba(27,77,62,.12);
   outline: none;
 }
 
@@ -375,7 +376,7 @@ body {
 /* ── Auth Layout ───────────────────────────────────────────── */
 .auth-wrapper {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #1e5fa8 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #0d2a21 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -517,11 +518,11 @@ body {
 }
 
 .notification-item:hover  { background: #f7f9fc; }
-.notification-item.unread { background: rgba(26,58,107,.04); }
+.notification-item.unread { background: rgba(27,77,62,.04); }
 .notification-item .notif-icon {
   width: 36px; height: 36px;
   border-radius: 50%;
-  background: rgba(26,58,107,.1);
+  background: rgba(27,77,62,.1);
   color: var(--primary);
   display: flex;
   align-items: center;
@@ -544,7 +545,7 @@ body {
 
 /* ── Utility ───────────────────────────────────────────────── */
 .text-primary-dark { color: var(--primary); }
-.bg-primary-soft   { background: rgba(26,58,107,.06); }
+.bg-primary-soft   { background: rgba(27,77,62,.06); }
 .fw-600            { font-weight: 600; }
 .cursor-pointer    { cursor: pointer; }
 .rounded-gcirms    { border-radius: var(--radius); }

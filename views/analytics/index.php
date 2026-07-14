@@ -119,8 +119,8 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'New Incidents',
                 data: trendData.map(r => r.count),
-                borderColor: '#1a3a6b',
-                backgroundColor: 'rgba(26,58,107,.1)',
+                borderColor: '#1B4D3E',
+                backgroundColor: 'rgba(27,77,62,.1)',
                 fill: true, tension: 0.4
             }]
         },
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: catData.map(r => r.name),
             datasets: [{ data: catData.map(r => r.total),
-                backgroundColor: ['#1a3a6b','#28a745','#ffc107','#dc3545','#17a2b8','#6c757d','#fd7e14','#6f42c1','#20c997','#e83e8c']
+                backgroundColor: ['#1B4D3E','#28a745','#F5A623','#dc3545','#17a2b8','#6c757d','#ffc107','#6f42c1','#20c997','#e83e8c']
             }]
         },
         options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }

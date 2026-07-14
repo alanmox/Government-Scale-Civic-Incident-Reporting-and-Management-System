@@ -222,27 +222,27 @@ function badge_for_status(string $status): string
 {
     $map = [
         // Incident statuses
-        'draft'               => 'badge bg-secondary',
-        'submitted'           => 'badge bg-info text-dark',
-        'received'            => 'badge bg-info text-dark',
+        'draft'               => 'badge bg-warning text-dark',
+        'submitted'           => 'badge bg-warning text-dark',
+        'received'            => 'badge bg-warning text-dark',
         'verified'            => 'badge bg-primary',
         'assigned'            => 'badge bg-warning text-dark',
         'in_progress'         => 'badge bg-warning text-dark',
         'work_order_created'  => 'badge bg-warning text-dark',
         'resolved'            => 'badge bg-success',
-        'quality_review'      => 'badge bg-primary',
-        'citizen_confirmation'=> 'badge bg-primary',
+        'quality_review'      => 'badge bg-warning text-dark',
+        'citizen_confirmation'=> 'badge bg-warning text-dark',
         'closed'              => 'badge bg-success',
-        'archived'            => 'badge bg-dark',
+        'archived'            => 'badge bg-secondary',
         'rejected'            => 'badge bg-danger',
         // Work-order statuses
-        'pending'             => 'badge bg-secondary',
+        'pending'             => 'badge bg-warning text-dark',
         'on_hold'             => 'badge bg-danger',
         'completed'           => 'badge bg-success',
-        'cancelled'           => 'badge bg-dark',
+        'cancelled'           => 'badge bg-danger',
         // Priority
-        'low'                 => 'badge bg-secondary',
-        'medium'              => 'badge bg-info text-dark',
+        'low'                 => 'badge bg-primary',
+        'medium'              => 'badge bg-warning text-dark',
         'high'                => 'badge bg-warning text-dark',
         'critical'            => 'badge bg-danger',
     ];
