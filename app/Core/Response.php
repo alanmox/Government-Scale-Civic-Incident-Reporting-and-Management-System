@@ -126,9 +126,14 @@ final class Response
 
     /**
      * Performs an HTTP redirect.
+     * Relative paths are resolved against the app base URL.
      */
     public function redirect(string $url, int $status = 302): void
     {
+        // Use url() helper for relative paths
+        if (str_starts_with($url, '/')) {
+            $url = url($url);
+        }
         $this->statusCode = $status;
         $this->setHeader('Location', $url);
         $this->sendHeaders();

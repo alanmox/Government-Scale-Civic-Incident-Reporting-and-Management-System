@@ -12,21 +12,36 @@ namespace App\Utilities;
  */
 final class PasswordHasher
 {
-    private const ALGORITHM = PASSWORD_ARGON2ID;
+    /**
+     * Returns the best available algorithm.
+     */
+    private static function algorithm(): string
+    {
+        return defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_BCRYPT;
+    }
 
-    private const OPTIONS = [
-        'memory_cost' => PASSWORD_ARGON2_DEFAULT_MEMORY_COST,
-        'time_cost'   => PASSWORD_ARGON2_DEFAULT_TIME_COST,
-        'threads'     => PASSWORD_ARGON2_DEFAULT_THREADS,
-    ];
+    /**
+     * Returns algorithm options appropriate for the selected algorithm.
+     */
+    private static function options(): array
+    {
+        if (defined('PASSWORD_ARGON2ID')) {
+            return [
+                'memory_cost' => defined('PASSWORD_ARGON2_DEFAULT_MEMORY_COST') ? PASSWORD_ARGON2_DEFAULT_MEMORY_COST : 65536,
+                'time_cost'   => defined('PASSWORD_ARGON2_DEFAULT_TIME_COST')   ? PASSWORD_ARGON2_DEFAULT_TIME_COST   : 4,
+                'threads'     => defined('PASSWORD_ARGON2_DEFAULT_THREADS')     ? PASSWORD_ARGON2_DEFAULT_THREADS     : 1,
+            ];
+        }
+
+        return [];
+    }
 
     /**
      * Hashes a password using Argon2ID, falling back to Bcrypt if unavailable.
      */
     public static function hash(string $plaintext): string
     {
-        $algo = defined('PASSWORD_ARGON2ID') ? self::ALGORITHM : PASSWORD_BCRYPT;
-        return password_hash($plaintext, $algo, self::OPTIONS);
+        return password_hash($plaintext, self::algorithm(), self::options());
     }
 
     /**
@@ -42,7 +57,6 @@ final class PasswordHasher
      */
     public static function needsRehash(string $hash): bool
     {
-        $algo = defined('PASSWORD_ARGON2ID') ? self::ALGORITHM : PASSWORD_BCRYPT;
-        return password_needs_rehash($hash, $algo, self::OPTIONS);
+        return password_needs_rehash($hash, self::algorithm(), self::options());
     }
 }

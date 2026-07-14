@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
-$app = require_once __DIR__ . '/../bootstrap/app.php';
+define('BASE_PATH', dirname(__DIR__));
+define('APP_PATH',  BASE_PATH . '/app');
+define('CONFIG_PATH', BASE_PATH . '/config');
+define('STORAGE_PATH', BASE_PATH . '/storage');
+define('VIEWS_PATH', BASE_PATH . '/views');
+define('RESOURCES_PATH', BASE_PATH . '/resources');
+
+require_once BASE_PATH . '/vendor/autoload.php';
+$app = require_once BASE_PATH . '/bootstrap/app.php';
 
 use App\Database\Connection;
 use App\Utilities\UUIDHelper;

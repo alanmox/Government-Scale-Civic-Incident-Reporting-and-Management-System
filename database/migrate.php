@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
-$app = require_once __DIR__ . '/../bootstrap/app.php';
+define('BASE_PATH', dirname(__DIR__));
+define('APP_PATH',  BASE_PATH . '/app');
+define('CONFIG_PATH', BASE_PATH . '/config');
+define('STORAGE_PATH', BASE_PATH . '/storage');
+define('VIEWS_PATH', BASE_PATH . '/views');
+define('RESOURCES_PATH', BASE_PATH . '/resources');
+
+require_once BASE_PATH . '/vendor/autoload.php';
+$app = require_once BASE_PATH . '/bootstrap/app.php';
 
 use App\Database\Connection;
 
@@ -39,21 +46,30 @@ foreach ($files as $file) {
         
         $sql = file_get_contents($file);
         
+        // Remove comment lines (-- style) then split by semicolons
+        $lines = explode("\n", $sql);
+        $cleanLines = array_filter($lines, fn(string $line): bool => !str_starts_with(trim($line), '--'));
+        $sql = implode("\n", $cleanLines);
+        
+        $statements = array_filter(
+            array_map('trim', explode(';', $sql)),
+            fn(string $s): bool => $s !== ''
+        );
+        
+        // DDL (CREATE TABLE) auto-commits in MySQL, so we run each statement
+        // individually and track in the migrations table after all succeed.
         try {
-            $pdo->beginTransaction();
+            foreach ($statements as $i => $statement) {
+                $pdo->exec($statement);
+            }
             
-            // Execute statements individually if separated by ';'
-            // A simple exec is often enough unless there are delimiters, but for robust schema parsing:
-            $pdo->exec($sql);
-            
+            // Record the migration as executed
             $stmt = $pdo->prepare("INSERT INTO migrations (migration, batch) VALUES (?, ?)");
             $stmt->execute([$filename, $batch]);
             
-            $pdo->commit();
             $count++;
             echo "Migrated:  {$filename}\n";
         } catch (\Exception $e) {
-            $pdo->rollBack();
             echo "Error migrating {$filename}: " . $e->getMessage() . "\n";
             exit(1);
         }
