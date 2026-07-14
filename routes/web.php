@@ -20,6 +20,8 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
+use App\Controllers\IncidentController;
+use App\Controllers\NotificationController;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\CsrfMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -51,10 +53,14 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     // Incidents, Profile, Admin, Reports, etc.
     
     // Incidents
-    $router->get('/incidents/create', [App\Controllers\IncidentController::class, 'create']);
-    $router->post('/incidents', [App\Controllers\IncidentController::class, 'store'], [CsrfMiddleware::class]);
-    $router->get('/incidents/my', [App\Controllers\IncidentController::class, 'indexMy']);
-    $router->get('/incidents/{id}', [App\Controllers\IncidentController::class, 'show']);
+    $router->get('/incidents', [IncidentController::class, 'index']);
+    $router->get('/incidents/create', [IncidentController::class, 'create']);
+    $router->post('/incidents', [IncidentController::class, 'store'], [CsrfMiddleware::class]);
+    $router->get('/incidents/my', [IncidentController::class, 'indexMy']);
+    $router->get('/incidents/{id}', [IncidentController::class, 'show']);
+
+    // Notifications
+    $router->get('/notifications', [NotificationController::class, 'index']);
 
     // Verification Queue (Officers)
     $router->get('/verification', [App\Controllers\VerificationController::class, 'queue']);

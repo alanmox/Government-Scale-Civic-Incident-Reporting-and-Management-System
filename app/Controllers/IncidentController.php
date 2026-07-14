@@ -28,6 +28,36 @@ final class IncidentController extends BaseController
     }
 
     /**
+     * List all incidents (role-aware).
+     */
+    public function index(): void
+    {
+        $this->requireAuth();
+
+        $roleSlug = $this->session->get('user_role', 'user');
+        $permissions = $this->session->get('permissions', []);
+
+        // Admins/officers see all incidents; citizens see only theirs
+        if (in_array($roleSlug, ['super_admin', 'national_admin', 'agency_admin', 'district_officer', 'ward_officer', 'agency_officer', 'regional_officer'])) {
+            $status = $this->request->query('status', '');
+            $page = max(1, $this->request->int('page', 1));
+            $limit = 20;
+            $offset = ($page - 1) * $limit;
+
+            $incidents = $this->incidentRepo->findFiltered($status, $limit, $offset);
+        } else {
+            $this->redirect('/incidents/my');
+            return;
+        }
+
+        $this->view('incidents/list', [
+            'pageTitle' => __('nav.incidents'),
+            'incidents' => $incidents,
+            'status'    => $status
+        ]);
+    }
+
+    /**
      * Show list of user's own incidents.
      */
     public function indexMy(): void

@@ -100,6 +100,32 @@ final class IncidentRepository extends BaseRepository implements Searchable
         return (int) $stmt->fetchColumn();
     }
 
+    /**
+     * Fetch all incidents with optional status filter and pagination.
+     */
+    public function findFiltered(string $status = '', int $limit = 20, int $offset = 0): array
+    {
+        $criteria = [];
+        if ($status !== '') {
+            $criteria['status'] = $status;
+        }
+
+        [$sql, $params] = $this->buildSearchQuery($criteria);
+
+        $sql .= ' ORDER BY i.reported_at DESC LIMIT :limit OFFSET :offset';
+        $params['limit'] = $limit;
+        $params['offset'] = $offset;
+
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($params as $key => $val) {
+            $type = is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue(":$key", $val, $type);
+        }
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     private function buildSearchQuery(array $criteria, bool $countOnly = false): array
     {
         $select = $countOnly

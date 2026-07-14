@@ -32,6 +32,11 @@ class Incident extends BaseModel
         return (string) ($this->attributes['id'] ?? '');
     }
 
+    public function getUuid(): string
+    {
+        return (string) ($this->attributes['uuid_str'] ?? '');
+    }
+
     public function getReferenceNumber(): string
     {
         return (string) ($this->attributes['reference_number'] ?? '');
