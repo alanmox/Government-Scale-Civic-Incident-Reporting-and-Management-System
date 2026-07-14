@@ -43,6 +43,18 @@ $active = fn(string $path): string => str_starts_with($currentPath, $path) ? 'ac
         <a href="<?= url('incidents/my') ?>" class="sidebar-item <?= $active('/incidents/my') ?>">
             <i class="bi bi-file-text"></i> My Reports
         </a>
+
+        <a href="<?= url('map') ?>" class="sidebar-item <?= $active('/map') ?>">
+            <i class="bi bi-map"></i> Incident Map
+        </a>
+
+        <a href="<?= url('my-impact') ?>" class="sidebar-item <?= $active('/my-impact') ?>">
+            <i class="bi bi-trophy"></i> My Impact
+        </a>
+
+        <a href="<?= url('updates') ?>" class="sidebar-item <?= $active('/updates') ?>">
+            <i class="bi bi-chat-dots"></i> Updates
+        </a>
         <?php endif; ?>
 
         <!-- ── ADMIN SECTION ── -->
