@@ -26,10 +26,7 @@
 <?php require VIEWS_PATH . '/partials/topnav.php'; ?>
 
 <div class="app-wrapper">
-    <!-- Sidebar -->
-    <?php require VIEWS_PATH . '/partials/sidebar.php'; ?>
-
-    <!-- Main Content -->
+    <!-- Main Content (left) -->
     <main class="main-content" id="main-content">
 
         <!-- Breadcrumbs -->
@@ -57,6 +54,9 @@
         <?= $content ?? '' ?>
 
     </main>
+
+    <!-- Sidebar (right) -->
+    <?php require VIEWS_PATH . '/partials/sidebar.php'; ?>
 </div>
 
 <!-- Footer -->

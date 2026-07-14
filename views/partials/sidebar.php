@@ -107,34 +107,48 @@ $groupOpen = function(array $paths) use ($currentPath): string {
             <?php endif; ?>
         <?php endif; ?>
 
-        <!-- ── ANALYTICS & REPORTS ── -->
-        <?php if ($can('analytics.view') || $can('report.generate')): ?>
-        <div class="sidebar-section-label">Analytics</div>
+        <!-- ── TRACKING & ANALYTICS ── -->
+        <?php if ($can('analytics.view') || $can('report.generate') || $can('incident.assign')): ?>
+        <div class="sidebar-section-label">Tracking & Analytics</div>
 
-            <!-- NEW: Analytics (was dead placeholder) -->
             <?php if ($can('analytics.view')): ?>
             <a href="<?= url('analytics') ?>" class="sidebar-item <?= $active('/analytics') ?>">
-                <i class="bi bi-bar-chart-line"></i> <?= e(__('nav.analytics')) ?>
+                <i class="bi bi-bar-chart-line"></i> Incident Trends
             </a>
-            <?php endif; ?>
 
-            <!-- NEW: Incident Map (admin-level view) -->
-            <?php if ($can('analytics.view')): ?>
+            <a href="<?= url('analytics/sla-compliance') ?>" class="sidebar-item <?= $active('/analytics/sla-compliance') ?>">
+                <i class="bi bi-clock-check"></i> SLA Compliance
+            </a>
+
+            <a href="<?= url('analytics/response-times') ?>" class="sidebar-item <?= $active('/analytics/response-times') ?>">
+                <i class="bi bi-stopwatch"></i> Response Times
+            </a>
+
             <a href="<?= url('map') ?>" class="sidebar-item <?= $active('/map') ?>">
-                <i class="bi bi-geo-alt"></i> National Map
+                <i class="bi bi-geo-alt"></i> Geo Analytics
+            </a>
+
+            <a href="<?= url('analytics/performance') ?>" class="sidebar-item <?= $active('/analytics/performance') ?>">
+                <i class="bi bi-graph-up-arrow"></i> Performance Metrics
             </a>
             <?php endif; ?>
 
-            <!-- NEW: Escalations -->
             <?php if ($can('incident.assign') || $can('analytics.view')): ?>
             <a href="<?= url('escalations') ?>" class="sidebar-item <?= $active('/escalations') ?>">
-                <i class="bi bi-exclamation-octagon"></i> Escalations
+                <i class="bi bi-exclamation-octagon"></i> Escalation Tracker
+            </a>
+
+            <a href="<?= url('analytics/workload') ?>" class="sidebar-item <?= $active('/analytics/workload') ?>">
+                <i class="bi bi-people"></i> Team Workload
             </a>
             <?php endif; ?>
 
             <?php if ($can('report.generate')): ?>
             <a href="<?= url('reports') ?>" class="sidebar-item <?= $active('/reports') ?>">
-                <i class="bi bi-file-earmark-bar-graph"></i> <?= e(__('nav.reports')) ?>
+                <i class="bi bi-file-earmark-bar-graph"></i> Report Builder
+            </a>
+            <a href="<?= url('reports/export-incidents') ?>" class="sidebar-item <?= $active('/reports/export-incidents') ?>">
+                <i class="bi bi-download"></i> Export Data
             </a>
             <?php endif; ?>
         <?php endif; ?>
@@ -145,7 +159,10 @@ $groupOpen = function(array $paths) use ($currentPath): string {
 
             <?php if ($can('user.manage')): ?>
             <a href="<?= url('admin/users') ?>" class="sidebar-item <?= $active('/admin/users') ?>">
-                <i class="bi bi-people"></i> <?= e(__('nav.users')) ?>
+                <i class="bi bi-people"></i> User Management
+            </a>
+            <a href="<?= url('admin/users/activity') ?>" class="sidebar-item <?= $active('/admin/users/activity') ?>">
+                <i class="bi bi-activity"></i> User Activity Log
             </a>
             <?php endif; ?>
 
@@ -157,37 +174,46 @@ $groupOpen = function(array $paths) use ($currentPath): string {
 
             <?php if ($can('system.configure')): ?>
             <a href="<?= url('admin/agencies') ?>" class="sidebar-item <?= $active('/admin/agencies') ?>">
-                <i class="bi bi-building"></i> Agencies
+                <i class="bi bi-building"></i> Agencies & Departments
             </a>
             <a href="<?= url('admin/categories') ?>" class="sidebar-item <?= $active('/admin/categories') ?>">
-                <i class="bi bi-tags"></i> Categories
+                <i class="bi bi-tags"></i> Incident Categories
             </a>
 
-            <!-- NEW: SLA Management -->
             <a href="<?= url('admin/sla') ?>" class="sidebar-item <?= $active('/admin/sla') ?>">
-                <i class="bi bi-clock-history"></i> SLA Management
+                <i class="bi bi-clock-history"></i> SLA Configuration
             </a>
 
             <a href="<?= url('admin/workflow') ?>" class="sidebar-item <?= $active('/admin/workflow') ?>">
-                <i class="bi bi-diagram-3"></i> Workflow Config
+                <i class="bi bi-diagram-3"></i> Workflow Engine
             </a>
             <a href="<?= url('admin/routing') ?>" class="sidebar-item <?= $active('/admin/routing') ?>">
                 <i class="bi bi-signpost-split"></i> Routing Rules
             </a>
-            <a href="<?= url('admin/settings') ?>" class="sidebar-item <?= $active('/admin/settings') ?>">
-                <i class="bi bi-sliders"></i> <?= e(__('nav.settings')) ?>
+
+            <a href="<?= url('admin/regions') ?>" class="sidebar-item <?= $active('/admin/regions') ?>">
+                <i class="bi bi-map"></i> Regions & Boundaries
             </a>
 
-            <!-- NEW: System Backup -->
+            <a href="<?= url('admin/integrations') ?>" class="sidebar-item <?= $active('/admin/integrations') ?>">
+                <i class="bi bi-plug"></i> API Integrations
+            </a>
+
+            <a href="<?= url('admin/settings') ?>" class="sidebar-item <?= $active('/admin/settings') ?>">
+                <i class="bi bi-sliders"></i> System Settings
+            </a>
+
             <a href="<?= url('admin/backup') ?>" class="sidebar-item <?= $active('/admin/backup') ?>">
-                <i class="bi bi-cloud-arrow-down"></i> System Backup
+                <i class="bi bi-cloud-arrow-down"></i> Backup & Restore
             </a>
             <?php endif; ?>
 
-            <!-- NEW: Audit Logs (live implementation) -->
             <?php if ($can('audit.view')): ?>
             <a href="<?= url('admin/audit-logs') ?>" class="sidebar-item <?= $active('/admin/audit-logs') ?>">
-                <i class="bi bi-journal-text"></i> <?= e(__('nav.audit_logs')) ?>
+                <i class="bi bi-journal-text"></i> Audit Trail
+            </a>
+            <a href="<?= url('admin/system-health') ?>" class="sidebar-item <?= $active('/admin/system-health') ?>">
+                <i class="bi bi-heart-pulse"></i> System Health
             </a>
             <?php endif; ?>
 
