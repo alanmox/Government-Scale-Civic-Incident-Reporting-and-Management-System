@@ -63,9 +63,18 @@ final class Response
         $this->statusCode = $status;
         $this->sendHeaders();
 
+        // Render view content into buffer
         ob_start();
         require $file;
-        echo ob_get_clean();
+        $content = ob_get_clean();
+
+        // Wrap in layout if specified
+        $layoutFile = isset($layout) ? VIEWS_PATH . '/layouts/' . $layout . '.php' : null;
+        if ($layoutFile && file_exists($layoutFile)) {
+            require $layoutFile;
+        } else {
+            echo $content;
+        }
     }
 
     /**
