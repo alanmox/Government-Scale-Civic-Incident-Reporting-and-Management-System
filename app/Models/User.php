@@ -60,7 +60,7 @@ class User extends Person
     {
         return $this->getProfilePhoto()
             ? url('files/' . $this->getProfilePhoto())
-            : url('assets/images/default-avatar.png');
+            : '';
     }
 
     // ── Status ─────────────────────────────────────────────────────────────────

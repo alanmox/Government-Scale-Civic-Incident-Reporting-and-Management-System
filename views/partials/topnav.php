@@ -83,14 +83,17 @@ $unreadNotifications = $session->get('unread_notifications', 0);
         </div>
 
         <!-- Profile Dropdown -->
-        <?php if ($userId): ?>
+        <?php if ($userId):
+            $name = $userInfo['name'] ?? 'User';
+            $parts = explode(' ', $name);
+            $initials = strtoupper(($parts[0][0] ?? 'U') . (isset($parts[1]) ? $parts[1][0] : ''));
+        ?>
         <div class="dropdown">
             <button class="d-flex align-items-center gap-2 bg-transparent border-0 text-white ps-1"
                     data-bs-toggle="dropdown">
-                <img src="<?= e($userInfo['avatar'] ?? asset('images/default-avatar.png')) ?>"
-                     class="topnav-avatar" alt="Profile">
+                <div class="topnav-avatar" style="background:var(--accent-light);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.3);"><?= e($initials) ?></div>
                 <span class="d-none d-lg-inline" style="font-size:.82rem;font-weight:500;">
-                    <?= e($userInfo['name'] ?? 'User') ?>
+                    <?= e($name) ?>
                 </span>
                 <i class="bi bi-chevron-down d-none d-lg-inline" style="font-size:.7rem;opacity:.7;"></i>
             </button>

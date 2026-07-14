@@ -51,7 +51,15 @@ body {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--topnav-height);
-  background: var(--primary);
+  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+              repeating-linear-gradient(
+                45deg,
+                #1eb53a, #1eb53a 20px,
+                #fcd116 20px, #fcd116 25px,
+                #000000 25px, #000000 45px,
+                #fcd116 45px, #fcd116 50px,
+                #00a3dd 50px, #00a3dd 70px
+              );
   color: #fff;
   display: flex;
   align-items: center;
@@ -147,7 +155,15 @@ body {
   right: 0;
   width: var(--sidebar-width);
   height: calc(100vh - var(--topnav-height));
-  background: var(--primary);
+  background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+              repeating-linear-gradient(
+                45deg,
+                #1eb53a, #1eb53a 20px,
+                #fcd116 20px, #fcd116 25px,
+                #000000 25px, #000000 45px,
+                #fcd116 45px, #fcd116 50px,
+                #00a3dd 50px, #00a3dd 70px
+              );
   border-left: 1px solid rgba(255,255,255,.08);
   overflow-y: auto;
   z-index: 1030;
