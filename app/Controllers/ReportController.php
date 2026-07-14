@@ -30,7 +30,7 @@ final class ReportController extends BaseController
         $this->requireAuth();
         
         // In a real app, require specific permissions like 'report.export'
-        if (!in_array($this->session->get('user_role'), ['admin', 'super_admin', 'agency_officer'])) {
+        if ($this->session->get('user_role') !== 'super_admin') {
             $this->redirectWithError('/dashboard', __('error.403_message'));
             return;
         }
