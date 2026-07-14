@@ -23,16 +23,10 @@ echo "Seeding basic data...\n";
 try {
     $pdo->beginTransaction();
 
-    // 1. Core Roles
+    // 1. Core Roles (only 2: Super Admin + Citizen)
     $roles = [
         ['name' => 'Super Administrator', 'slug' => 'super_admin', 'desc' => 'Full system access', 'system' => 1],
-        ['name' => 'National Administrator', 'slug' => 'national_admin', 'desc' => 'National oversight', 'system' => 1],
-        ['name' => 'Agency Administrator', 'slug' => 'agency_admin', 'desc' => 'Agency management', 'system' => 1],
-        ['name' => 'Agency Officer', 'slug' => 'agency_officer', 'desc' => 'Handles agency incidents', 'system' => 1],
-        ['name' => 'Regional Officer', 'slug' => 'regional_officer', 'desc' => 'Regional oversight', 'system' => 1],
-        ['name' => 'District Officer', 'slug' => 'district_officer', 'desc' => 'District oversight', 'system' => 1],
-        ['name' => 'Ward Officer', 'slug' => 'ward_officer', 'desc' => 'Ward operations', 'system' => 1],
-        ['name' => 'Citizen', 'slug' => 'citizen', 'desc' => 'Public user', 'system' => 1],
+        ['name' => 'Citizen', 'slug' => 'citizen', 'desc' => 'Public user (reporter)', 'system' => 1],
     ];
 
     $roleIds = [];
@@ -64,6 +58,16 @@ try {
         $permIds[$p['slug']] = $id;
         $stmtPerm->execute([$id, $p['name'], $p['slug'], $p['module']]);
     }
+
+    // 2b. Assign permissions
+    $stmtRp = $pdo->prepare("INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES (?, ?)");
+    foreach ($permIds as $slug => $permBinId) {
+        // Super admin gets ALL permissions
+        $stmtRp->execute([$roleIds['super_admin'], $permBinId]);
+    }
+    // Citizen gets only create + view
+    $stmtRp->execute([$roleIds['citizen'], $permIds['incident.create']]);
+    $stmtRp->execute([$roleIds['citizen'], $permIds['incident.view']]);
 
     // 3. Super Admin User
     $adminUuid = UUIDHelper::generate();

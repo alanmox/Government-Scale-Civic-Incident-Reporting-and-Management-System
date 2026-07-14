@@ -37,8 +37,7 @@ final class IncidentController extends BaseController
         $roleSlug = $this->session->get('user_role', 'user');
         $permissions = $this->session->get('permissions', []);
 
-        // Admins/officers see all incidents; citizens see only theirs
-        if (in_array($roleSlug, ['super_admin', 'national_admin', 'agency_admin', 'district_officer', 'ward_officer', 'agency_officer', 'regional_officer'])) {
+        if ($roleSlug === 'super_admin' || in_array('*', $permissions, true)) {
             $status = $this->request->query('status', '');
             $page = max(1, $this->request->int('page', 1));
             $limit = 20;
