@@ -54,6 +54,17 @@ final class UUIDHelper
      */
     public static function toString(string $binary): string
     {
+        // Guard: if it's already a valid 36-char UUID string, return as-is
+        if (strlen($binary) === 36 && substr_count($binary, '-') === 4) {
+            return $binary;
+        }
+
+        if (strlen($binary) !== 16) {
+            throw new \InvalidArgumentException(
+                "Cannot convert to UUID string: value must be 16 bytes. Got: " . strlen($binary) . " bytes."
+            );
+        }
+
         $hex = bin2hex($binary);
         return sprintf(
             '%s-%s-%s-%s-%s',
