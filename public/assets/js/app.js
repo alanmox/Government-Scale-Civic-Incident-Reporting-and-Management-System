@@ -184,3 +184,119 @@ function initLocationCascade() {
 document.addEventListener('DOMContentLoaded', () => {
     initLocationCascade();
 });
+
+// ── Enterprise UX Polish (Sprint 5) ──────────────────────────────────────────
+
+// 1. High-Contrast Accessibility Mode
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btn-high-contrast');
+    if (!btn) return;
+    
+    // Check localStorage
+    if (localStorage.getItem('gcirms_high_contrast') === '1') {
+        document.body.classList.add('high-contrast');
+    }
+    
+    btn.addEventListener('click', () => {
+        const isActive = document.body.classList.toggle('high-contrast');
+        localStorage.setItem('gcirms_high_contrast', isActive ? '1' : '0');
+    });
+});
+
+// 2. Collapsible Dashboard Widgets
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.card-header').forEach((header, index) => {
+        // Only target headers that have an icon and some text, ignoring ones with complex structures if needed
+        const cardBody = header.nextElementSibling;
+        if (!cardBody || !cardBody.classList.contains('card-body')) return;
+
+        // Create toggle button
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm btn-link text-muted p-0 float-end no-print';
+        btn.innerHTML = '<i class="bi bi-chevron-up"></i>';
+        
+        const storageKey = 'gcirms_card_collapse_' + index;
+        
+        // Initial state
+        if (localStorage.getItem(storageKey) === '1') {
+            cardBody.style.display = 'none';
+            btn.innerHTML = '<i class="bi bi-chevron-down"></i>';
+        }
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (cardBody.style.display === 'none') {
+                cardBody.style.display = 'block';
+                btn.innerHTML = '<i class="bi bi-chevron-up"></i>';
+                localStorage.setItem(storageKey, '0');
+            } else {
+                cardBody.style.display = 'none';
+                btn.innerHTML = '<i class="bi bi-chevron-down"></i>';
+                localStorage.setItem(storageKey, '1');
+            }
+        });
+        
+        header.appendChild(btn);
+    });
+});
+
+// 3. Quick Export to CSV for Tables
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('table.table-gcirms').forEach((table, index) => {
+        const container = table.closest('.card-body') || table.parentElement;
+        if (!container || table.classList.contains('no-export')) return;
+        
+        // Create export button
+        const exportBtn = document.createElement('button');
+        exportBtn.className = 'btn btn-sm btn-outline-secondary mb-2 float-end no-print';
+        exportBtn.innerHTML = '<i class="bi bi-filetype-csv"></i> Export CSV';
+        
+        exportBtn.addEventListener('click', () => {
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll('td, th');
+                
+                for (let j = 0; j < cols.length; j++) {
+                    // Clean text (remove extra spaces and commas)
+                    let text = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").replace(/"/g, '""');
+                    row.push('"' + text + '"');
+                }
+                csv.push(row.join(','));
+            }
+            
+            const csvFile = new Blob([csv.join('\n')], {type: "text/csv"});
+            const downloadLink = document.createElement("a");
+            downloadLink.download = 'export_' + new Date().getTime() + '.csv';
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            downloadLink.remove();
+        });
+        
+        // Insert before the table
+        table.parentNode.insertBefore(exportBtn, table);
+    });
+});
+
+// 4. Quick Print Button
+document.addEventListener('DOMContentLoaded', () => {
+    const pageHeader = document.querySelector('.page-header');
+    if (!pageHeader) return;
+    
+    let actionsDiv = document.querySelector('.page-header-actions');
+    if (!actionsDiv) {
+        actionsDiv = document.createElement('div');
+        actionsDiv.className = 'page-header-actions';
+        pageHeader.appendChild(actionsDiv);
+    }
+
+    const printBtn = document.createElement('button');
+    printBtn.className = 'btn btn-sm btn-outline-secondary ms-2 no-print';
+    printBtn.title = 'Print or Save as PDF';
+    printBtn.innerHTML = '<i class="bi bi-printer"></i>';
+    printBtn.onclick = () => window.print();
+    actionsDiv.appendChild(printBtn);
+});

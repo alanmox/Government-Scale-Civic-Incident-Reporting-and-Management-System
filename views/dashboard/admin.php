@@ -109,12 +109,12 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 data: data,
                 backgroundColor: [
-                    '#1a3a6b', // primary
+                    '#00A86B', // primary
                     '#ffc107', // warning
                     '#28a745', // success
                     '#dc3545', // danger
                     '#6c757d', // secondary
-                    '#17a2b8'  // info
+                    '#66BB6A'  // accent
                 ]
             }]
         },

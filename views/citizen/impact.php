@@ -3,7 +3,7 @@
 <!-- Impact Score Card -->
 <div class="row g-4 mb-4">
     <div class="col-md-3">
-        <div class="stat-card" style="background: linear-gradient(135deg,#1a3a6b,#2d5a9e); color:#fff;">
+        <div class="stat-card" style="background: linear-gradient(135deg,#00A86B,#26C47A); color:#fff;">
             <div class="stat-icon" style="background:rgba(255,255,255,.2);"><i class="bi bi-file-earmark-text"></i></div>
             <div>
                 <div class="stat-label" style="color:rgba(255,255,255,.8);">Total Reports</div>

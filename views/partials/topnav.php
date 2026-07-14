@@ -36,6 +36,11 @@ $unreadNotifications = $session->get('unread_notifications', 0);
     <!-- Actions -->
     <div class="topnav-actions">
 
+        <!-- Accessibility / High Contrast Toggle -->
+        <button class="topnav-btn" id="btn-high-contrast" aria-label="Toggle High Contrast" title="Toggle High Contrast Mode">
+            <i class="bi bi-circle-half"></i>
+        </button>
+
         <!-- Language Toggle -->
         <div class="dropdown">
             <button class="topnav-btn" data-bs-toggle="dropdown" aria-label="Language" title="Switch Language">

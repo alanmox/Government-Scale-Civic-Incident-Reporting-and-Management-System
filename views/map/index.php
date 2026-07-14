@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }).addTo(map);
 
     const incidents = <?= json_encode($incidents) ?>;
-    const priorityColors = { critical: '#dc3545', high: '#F5A623', medium: '#F5A623', low: '#1B4D3E' };
+    const priorityColors = { critical: '#dc3545', high: '#F5A623', medium: '#F5A623', low: '#00A86B' };
 
     incidents.forEach(inc => {
         if (!inc.latitude || !inc.longitude) return;
