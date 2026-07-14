@@ -105,22 +105,30 @@ final class AuthService extends BaseService
      */
     private function initializeSession(User $user): void
     {
-        $userId = $user->getId();
-        
-        $roles = $this->userRepo->findUserRoles($userId);
-        $roleId = $roles[0]['id'] ?? null; // Primary role
+        $binaryUserId = $user->getId(); // Raw BINARY(16) from DB
+
+        // Convert binary UUID → UUID string for safe session storage.
+        // All DB operations will call UUIDHelper::toBinary() when they need it.
+        $uuidString = UUIDHelper::toString($binaryUserId);
+        $binaryRoleId = null;
+
+        $roles = $this->userRepo->findUserRoles($binaryUserId);
+        $binaryRoleId = $roles[0]['id'] ?? null; // Binary role ID from DB
         $roleName = $roles[0]['name'] ?? 'User';
         $roleSlug = $roles[0]['slug'] ?? 'user';
 
+        // Convert binary role ID to string for session too
+        $roleIdString = $binaryRoleId ? UUIDHelper::toString($binaryRoleId) : '';
+
         $permissions = [];
         if ($user instanceof SuperAdmin) {
-            // SuperAdmin bypass (checked in middleware if we want, but storing a flag is easier)
-            $permissions = ['*']; 
+            $permissions = ['*'];
         } else {
-            $permissions = $this->userRepo->findUserPermissions($userId);
+            $permissions = $this->userRepo->findUserPermissions($binaryUserId);
         }
 
-        $this->session->login($userId, $roleId ?? '', [
+        // Store UUID strings in session — never raw binary
+        $this->session->login($uuidString, $roleIdString, [
             'user_name'   => $user->getFullName(),
             'user_role'   => $roleSlug,
             'permissions' => $permissions,

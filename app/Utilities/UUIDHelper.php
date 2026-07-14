@@ -23,10 +23,30 @@ final class UUIDHelper
 
     /**
      * Converts a UUID string to a 16-byte binary string for DB storage.
+     *
+     * Accepts:
+     *  - Standard UUID string:  "ca9c8d79-8c7d-4a30-a1ba-9d2fcae61234"
+     *  - Hex string (no dashes): "ca9c8d798c7d4a30a1ba9d2fcae61234"
+     *
+     * @throws \InvalidArgumentException If the value cannot be converted.
      */
     public static function toBinary(string $uuid): string
     {
-        return hex2bin(str_replace('-', '', $uuid));
+        // Guard: if it's already 16-byte binary, return it directly.
+        // This prevents double-conversion crashes.
+        if (strlen($uuid) === 16) {
+            return $uuid;
+        }
+
+        $hex = str_replace('-', '', $uuid);
+
+        if (strlen($hex) !== 32 || !ctype_xdigit($hex)) {
+            throw new \InvalidArgumentException(
+                "Cannot convert to binary: value is not a valid UUID or hex string. Got: " . bin2hex(substr($uuid, 0, 8)) . "..."
+            );
+        }
+
+        return hex2bin($hex);
     }
 
     /**
