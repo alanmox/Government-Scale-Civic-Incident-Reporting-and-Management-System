@@ -121,6 +121,7 @@ final class AuthService extends BaseService
         }
 
         $this->session->login($userId, $roleId ?? '', [
+            'user_name'   => $user->getFullName(),
             'user_role'   => $roleSlug,
             'permissions' => $permissions,
             'user_info'   => [
