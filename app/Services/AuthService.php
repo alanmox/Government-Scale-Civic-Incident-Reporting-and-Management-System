@@ -133,6 +133,36 @@ final class AuthService extends BaseService
         ]);
     }
 
+    /**
+     * Register a new citizen user.
+     *
+     * @param array{full_name: string, email: string, phone: string, password: string} $data
+     */
+    public function registerCitizen(array $data): void
+    {
+        $uuid = UUIDHelper::generate();
+        $binId = UUIDHelper::toBinary($uuid);
+        $username = explode('@', $data['email'])[0];
+
+        $userData = [
+            'id'            => $binId,
+            'uuid'          => $uuid,
+            'full_name'     => $data['full_name'],
+            'username'      => $username,
+            'email'         => $data['email'],
+            'phone'         => $data['phone'] ?? '',
+            'password_hash' => PasswordHasher::hash($data['password']),
+            'status'        => 'active',
+        ];
+
+        $this->userRepo->createUser($userData);
+
+        $role = $this->userRepo->findRoleBySlug('citizen');
+        if ($role) {
+            $this->userRepo->assignRole($binId, $role['id']);
+        }
+    }
+
     private function logFailure(?string $userId, string $ip, string $userAgent, string $reason): void
     {
         if ($userId) {

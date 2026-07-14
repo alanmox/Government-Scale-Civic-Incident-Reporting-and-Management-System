@@ -125,6 +125,30 @@ final class UserRepository extends BaseRepository implements Searchable
     }
 
     /**
+     * Find a role ID by slug.
+     */
+    public function findRoleBySlug(string $slug): ?array
+    {
+        $sql = 'SELECT id, name, slug FROM roles WHERE slug = :slug AND deleted_at IS NULL LIMIT 1';
+        $stmt = $this->execute($sql, ['slug' => $slug]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    /**
+     * Creates a new user record.
+     */
+    public function createUser(array $data): void
+    {
+        $columns = ['id', 'uuid', 'full_name', 'username', 'email', 'phone', 'password_hash', 'status'];
+        $cols = implode(', ', array_map(fn($c) => "`{$c}`", $columns));
+        $vals = implode(', ', array_map(fn($c) => ":{$c}", $columns));
+
+        $sql = "INSERT INTO `{$this->table}` ({$cols}) VALUES ({$vals})";
+        $this->execute($sql, $data);
+    }
+
+    /**
      * Assigns a role to a user (idempotent).
      */
     public function assignRole(string $userId, string $roleId, ?string $assignedBy = null): void

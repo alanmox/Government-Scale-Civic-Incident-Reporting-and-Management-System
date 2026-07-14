@@ -96,8 +96,8 @@ final class AuthController extends BaseController
             // 1. Validate
             $validated = $this->validator->validateRegistration($data);
 
-            // 2. Register citizen via service (TODO: implement RegisterService)
-            // $this->registerService->registerCitizen($validated);
+            // 2. Register citizen
+            $this->authService->registerCitizen($validated);
 
             $this->redirectWithSuccess('/login', 'Registration successful. Please log in.');
 
