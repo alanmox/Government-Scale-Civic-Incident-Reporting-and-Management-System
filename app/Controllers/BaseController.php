@@ -39,6 +39,7 @@ abstract class BaseController
     protected function view(string $view, array $data = [], int $status = 200): void
     {
         $data['session'] = $this->session;
+        $data['layout'] ??= 'base';
         $this->response->view($view, $data, $status);
     }
 
