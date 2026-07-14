@@ -12,7 +12,7 @@ final class MapController extends BaseController
     {
         $this->requireAuth();
 
-        $pdo = \App\Database\Connection::getInstance()->pdo();
+        $pdo = \App\Database\Connection::getInstance()->getPdo();
 
         // Fetch all geolocated incidents with coordinates
         $incidents = $pdo->query(

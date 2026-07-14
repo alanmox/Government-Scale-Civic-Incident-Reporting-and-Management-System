@@ -13,7 +13,7 @@ final class CitizenController extends BaseController
     {
         $this->requireAuth();
 
-        $pdo = \App\Database\Connection::getInstance()->pdo();
+        $pdo = \App\Database\Connection::getInstance()->getPdo();
         $binId = \App\Utilities\UUIDHelper::toBinary($this->session->userId());
 
         $stats = $pdo->prepare(
@@ -64,7 +64,7 @@ final class CitizenController extends BaseController
     public function updates(): void
     {
         $this->requireAuth();
-        $pdo = \App\Database\Connection::getInstance()->pdo();
+        $pdo = \App\Database\Connection::getInstance()->getPdo();
         $binId = \App\Utilities\UUIDHelper::toBinary($this->session->userId());
 
         // Fetch work order updates on incidents owned by this citizen

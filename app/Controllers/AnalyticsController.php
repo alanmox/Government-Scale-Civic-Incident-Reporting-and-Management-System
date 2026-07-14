@@ -19,7 +19,7 @@ final class AnalyticsController extends BaseController
     {
         $this->requireAuth();
 
-        $pdo = \App\Database\Connection::getInstance()->pdo();
+        $pdo = \App\Database\Connection::getInstance()->getPdo();
 
         // Incidents per category (top 10)
         $byCategory = $pdo->query(

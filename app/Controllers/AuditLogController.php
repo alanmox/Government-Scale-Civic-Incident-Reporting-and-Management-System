@@ -12,7 +12,7 @@ final class AuditLogController extends BaseController
     {
         $this->requireAuth();
 
-        $pdo = \App\Database\Connection::getInstance()->pdo();
+        $pdo = \App\Database\Connection::getInstance()->getPdo();
 
         $page   = max(1, (int)($this->request->query('page') ?? 1));
         $limit  = 50;

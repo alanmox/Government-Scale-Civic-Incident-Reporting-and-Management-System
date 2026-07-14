@@ -12,7 +12,7 @@ final class EscalationController extends BaseController
     {
         $this->requireAuth();
 
-        $pdo = \App\Database\Connection::getInstance()->pdo();
+        $pdo = \App\Database\Connection::getInstance()->getPdo();
 
         // All incidents that have breached SLA or have been open > 14 days
         $escalated = $pdo->query(
