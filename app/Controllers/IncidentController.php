@@ -144,6 +144,14 @@ final class IncidentController extends BaseController
     }
 
     /**
+     * Show incident drafts (stub — returns list like indexMy).
+     */
+    public function drafts(): void
+    {
+        $this->indexMy();
+    }
+
+    /**
      * Show a specific incident details.
      */
     public function show(): void
@@ -162,7 +170,8 @@ final class IncidentController extends BaseController
 
         // Simplistic authorization check for demonstration
         $userIdBin = UUIDHelper::toBinary($this->session->userId());
-        if ($incidentData['citizen_id'] !== $userIdBin && !$this->session->hasPermission('incident.view')) {
+        $permissions = $this->session->get('permissions', []);
+        if ($incidentData['citizen_id'] !== $userIdBin && !in_array('incident.view', $permissions, true) && !in_array('*', $permissions, true)) {
              $this->redirectWithError('/dashboard', __('error.403_message'));
              return;
         }

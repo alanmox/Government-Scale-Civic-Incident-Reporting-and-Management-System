@@ -102,7 +102,7 @@ final class WorkOrderService extends BaseService
 
         // 3. Sync back to Incident Status if completed
         if ($progress === 100) {
-            $incidentUuid = UUIDHelper::fromBinary($woData['incident_id']);
+            $incidentUuid = UUIDHelper::toString($woData['incident_id']);
             $this->workflow->transition(
                 $incidentUuid, 
                 'resolved', 

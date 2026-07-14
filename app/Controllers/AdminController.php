@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-/**
- * AdminController — system administration stubs.
- * Full CRUD implementations planned for Phase 9.
- */
+use App\Repositories\CategoryRepository;
+use App\Repositories\SlaRepository;
+use App\Services\BackupService;
+use App\Services\SlaService;
+use App\Utilities\UUIDHelper;
+
 final class AdminController extends BaseController
 {
     public function users(): void
@@ -52,17 +54,15 @@ final class AdminController extends BaseController
         $this->view('admin/settings', ['pageTitle' => 'System Settings', 'breadcrumbs' => [['label' => 'Administration'], ['label' => 'Settings']]]);
     }
 
-    /** SLA Management — Phase 9 */
     public function sla(): void
     {
         $this->requireAuth();
-        
-        $slaRepo = new \App\Repositories\SlaRepository();
-        $slaService = new \App\Services\SlaService($slaRepo);
-        
-        // We also need categories for the dropdown
-        $categoryRepo = new \App\Repositories\CategoryRepository();
-        $categories = $categoryRepo->getAll();
+
+        $slaRepo = new SlaRepository();
+        $slaService = new SlaService($slaRepo);
+
+        $categoryRepo = new CategoryRepository();
+        $categories = $categoryRepo->findAll();
 
         $this->view('admin/sla', [
             'pageTitle'   => 'SLA Management',
@@ -75,21 +75,20 @@ final class AdminController extends BaseController
     public function storeSla(): void
     {
         $this->requireAuth();
-        $this->requireCsrf();
-        
-        $userId = $this->session->get('user_bin_id');
+
+        $userId = $this->session->userId();
         if (!$userId) {
             $this->redirect('/login');
         }
 
-        $slaRepo = new \App\Repositories\SlaRepository();
-        $slaService = new \App\Services\SlaService($slaRepo);
+        $slaRepo = new SlaRepository();
+        $slaService = new SlaService($slaRepo);
 
         try {
-            $slaService->saveSla(bin2hex($userId), $_POST);
-            $this->session->setFlash('success', 'SLA definition saved successfully.');
+            $slaService->saveSla(UUIDHelper::toString($userId), $this->request->all());
+            $this->session->flash('success', 'SLA definition saved successfully.');
         } catch (\Exception $e) {
-            $this->session->setFlash('error', $e->getMessage());
+            $this->session->flash('error', $e->getMessage());
         }
 
         $this->redirect('/admin/sla');
@@ -98,30 +97,28 @@ final class AdminController extends BaseController
     public function deleteSla(): void
     {
         $this->requireAuth();
-        $this->requireCsrf();
 
-        $userId = $this->session->get('user_bin_id');
+        $userId = $this->session->userId();
         if (!$userId) {
             $this->redirect('/login');
         }
 
-        $id = $_POST['id'] ?? '';
+        $id = $this->request->input('id', '');
         if ($id) {
-            $slaRepo = new \App\Repositories\SlaRepository();
-            $slaService = new \App\Services\SlaService($slaRepo);
-            $slaService->deleteSla(bin2hex($userId), $id);
-            $this->session->setFlash('success', 'SLA definition deleted.');
+            $slaRepo = new SlaRepository();
+            $slaService = new SlaService($slaRepo);
+            $slaService->deleteSla(UUIDHelper::toString($userId), $id);
+            $this->session->flash('success', 'SLA definition deleted.');
         }
 
         $this->redirect('/admin/sla');
     }
 
-    /** System Backup — Phase 9 */
     public function backup(): void
     {
         $this->requireAuth();
-        
-        $backupService = new \App\Services\BackupService();
+
+        $backupService = new BackupService();
         $backups = $backupService->getBackups();
 
         $this->view('admin/backup', [
@@ -134,14 +131,13 @@ final class AdminController extends BaseController
     public function createBackup(): void
     {
         $this->requireAuth();
-        $this->requireCsrf();
 
-        $backupService = new \App\Services\BackupService();
+        $backupService = new BackupService();
         try {
             $backupService->createDatabaseBackup();
-            $this->session->setFlash('success', 'System backup completed successfully.');
+            $this->session->flash('success', 'System backup completed successfully.');
         } catch (\Exception $e) {
-            $this->session->setFlash('error', $e->getMessage());
+            $this->session->flash('error', $e->getMessage());
         }
 
         $this->redirect('/admin/backup');
@@ -150,21 +146,20 @@ final class AdminController extends BaseController
     public function downloadBackup(): void
     {
         $this->requireAuth();
-        
-        $filename = $_GET['file'] ?? '';
+
+        $filename = $this->request->query('file', '');
         if (!$filename) {
             $this->redirect('/admin/backup');
         }
 
-        $backupService = new \App\Services\BackupService();
+        $backupService = new BackupService();
         $filepath = $backupService->getBackupPath($filename);
 
         if (!$filepath) {
-            $this->session->setFlash('error', 'Backup file not found.');
+            $this->session->flash('error', 'Backup file not found.');
             $this->redirect('/admin/backup');
         }
 
-        // Send file to browser
         header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');

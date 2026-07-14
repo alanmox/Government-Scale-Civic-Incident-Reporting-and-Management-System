@@ -106,21 +106,8 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     $router->post('/admin/backup/create', [App\Controllers\AdminController::class, 'createBackup']);
     $router->get('/admin/backup/download', [App\Controllers\AdminController::class, 'downloadBackup']);
 
-    // Citizen — Incident Drafts
+    // Citizen — Incident Drafts (stub)
     $router->get('/incidents/drafts', [App\Controllers\IncidentController::class, 'drafts']);
-
-    // Citizen — Bookmarks
-    $router->get('/bookmarks', [App\Controllers\CitizenController::class, 'bookmarks']);
-
-    // Citizen — Updates Inbox
-    $router->get('/updates', [App\Controllers\CitizenController::class, 'updates']);
-
-    // Citizen — My Impact
-    $router->get('/my-impact', [App\Controllers\CitizenController::class, 'impact']);
-
-    // Citizen — Alert/Notification Settings
-    $router->get('/notification-settings',       [App\Controllers\CitizenController::class, 'notificationSettings']);
-    $router->post('/notification-settings/save', [App\Controllers\CitizenController::class, 'notificationSettings'], [CsrfMiddleware::class]);
 });
 
 // ── Locale Switcher (public — no auth needed) ──────────────────────────────────
@@ -133,4 +120,14 @@ $router->get('/locale/{code}', function () {
     }
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
     exit;
+});
+
+// ── Locations API ────────────────────────────────────────────────────────────
+$router->get('/api/v1/locations/regions', [\App\Controllers\Api\ApiLocationController::class, 'regions']);
+$router->get('/api/v1/locations/districts', [\App\Controllers\Api\ApiLocationController::class, 'districts']);
+$router->get('/api/v1/locations/wards', [\App\Controllers\Api\ApiLocationController::class, 'wards']);
+$router->get('/api/v1/locations/villages', [\App\Controllers\Api\ApiLocationController::class, 'villages']);
+
+$router->get('/migrate-locations', function() {
+    require_once __DIR__ . '/../migrate_locations.php';
 });

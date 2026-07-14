@@ -13,7 +13,6 @@ final class SlaRepository extends BaseRepository
     {
         parent::__construct();
         $this->table = 'sla_definitions';
-        $this->modelClass = SlaDefinition::class;
     }
 
     /**
@@ -31,7 +30,7 @@ final class SlaRepository extends BaseRepository
             ORDER BY c.name ASC, s.priority ASC
         ";
 
-        $stmt = $this->connection->getPdo()->query($sql);
+        $stmt = $this->pdo->query($sql);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Convert binary IDs to string for the view
@@ -48,7 +47,7 @@ final class SlaRepository extends BaseRepository
     public function findByCategoryAndPriority(string $categoryId, string $priority): ?array
     {
         $sql = "SELECT * FROM {$this->table} WHERE category_id = :category_id AND priority = :priority AND deleted_at IS NULL LIMIT 1";
-        $stmt = $this->connection->getPdo()->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':category_id', UUIDHelper::toBinary($categoryId), PDO::PARAM_LOB);
         $stmt->bindValue(':priority', $priority, PDO::PARAM_STR);
         $stmt->execute();

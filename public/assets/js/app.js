@@ -158,6 +158,10 @@ function initLocationCascade() {
         selectEl.disabled = false;
     }
 
+    if (regionSel && regionSel.options.length <= 1) {
+        loadOptions(regionSel, '/api/v1/locations/regions', 'Select Region');
+    }
+
     regionSel?.addEventListener('change', () => {
         const rid = regionSel.value;
         if (!rid) return;

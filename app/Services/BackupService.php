@@ -41,7 +41,7 @@ final class BackupService extends BaseService
 
     public function createDatabaseBackup(): string
     {
-        $dbConfig = require config_path('database.php');
+        $dbConfig = require CONFIG_PATH . '/database.php';
 
         $host = escapeshellarg($dbConfig['host']);
         $port = escapeshellarg((string)$dbConfig['port']);
