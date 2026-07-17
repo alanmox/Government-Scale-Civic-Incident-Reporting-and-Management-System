@@ -70,14 +70,14 @@
                         <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export All Incidents (CSV)
                         <i class="bi bi-download"></i>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled mt-2">
-                        User Management <span class="badge bg-secondary rounded-pill">Phase 9</span>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mt-2">
+                        User Management
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
-                        Role & Permissions <span class="badge bg-secondary rounded-pill">Phase 9</span>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        Role & Permissions
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
-                        System Configuration <span class="badge bg-secondary rounded-pill">Phase 9</span>
+                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        System Configuration
                     </a>
                 </div>
             </div>

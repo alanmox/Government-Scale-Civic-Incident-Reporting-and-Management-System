@@ -96,12 +96,12 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     // Admin Audit Logs (live)
     $router->get('/admin/audit-logs', [App\Controllers\AuditLogController::class, 'index']);
 
-    // Admin SLA Management (stub — Phase 9)
+    // Admin SLA Management
     $router->get('/admin/sla', [App\Controllers\AdminController::class, 'sla']);
     $router->post('/admin/sla', [App\Controllers\AdminController::class, 'storeSla'], [CsrfMiddleware::class]);
     $router->post('/admin/sla/delete', [App\Controllers\AdminController::class, 'deleteSla'], [CsrfMiddleware::class]);
 
-    // Admin System Backup (Phase 9)
+    // Admin System Backup
     $router->get('/admin/backup', [App\Controllers\AdminController::class, 'backup']);
     $router->post('/admin/backup/create', [App\Controllers\AdminController::class, 'createBackup'], [CsrfMiddleware::class]);
     $router->get('/admin/backup/download', [App\Controllers\AdminController::class, 'downloadBackup']);
