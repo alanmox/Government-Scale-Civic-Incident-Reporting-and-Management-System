@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Request;
+use App\Core\Response;
 use App\Repositories\IncidentRepository;
 use App\Repositories\WorkOrderRepository;
 use App\Utilities\UUIDHelper;
@@ -14,8 +16,8 @@ final class CitizenController extends BaseController
     private WorkOrderRepository $workOrderRepo;
 
     public function __construct(
-        \App\Core\Request $request,
-        \App\Core\Response $response
+        Request $request,
+        Response $response
     ) {
         parent::__construct($request, $response);
         $this->incidentRepo = new IncidentRepository();

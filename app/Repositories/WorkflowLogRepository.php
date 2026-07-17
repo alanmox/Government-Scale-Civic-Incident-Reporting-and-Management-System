@@ -47,7 +47,7 @@ final class WorkflowLogRepository extends BaseRepository
     {
         $sql = "SELECT w.*, BIN_TO_UUID(w.id) as uuid_str, u.full_name as actor_name, u.email as actor_email 
                 FROM `{$this->table}` w
-                JOIN `users` u ON w.actor_id = u.id
+                JOIN `users` u ON w.actor_id = u.id AND u.deleted_at IS NULL
                 WHERE w.incident_id = :incidentId
                 ORDER BY w.created_at DESC";
                 

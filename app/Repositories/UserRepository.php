@@ -118,6 +118,7 @@ final class UserRepository extends BaseRepository implements Searchable
                 INNER JOIN `role_permissions` rp ON rp.permission_id = p.id
                 INNER JOIN `user_roles` ur ON ur.role_id = rp.role_id
                 WHERE ur.user_id = :userId
+                  AND p.deleted_at IS NULL
                 ORDER BY p.slug';
 
         $rows = $this->execute($sql, ['userId' => $userId])->fetchAll(PDO::FETCH_COLUMN);

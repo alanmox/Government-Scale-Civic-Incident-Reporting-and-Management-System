@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
+use App\Core\Request;
+use App\Core\Response;
 use App\Repositories\IncidentRepository;
 use App\Repositories\WorkOrderRepository;
 use App\Services\DashboardService;
@@ -12,8 +14,8 @@ final class DashboardController extends BaseController
     private DashboardService $dashService;
 
     public function __construct(
-        \App\Core\Request $request,
-        \App\Core\Response $response
+        Request $request,
+        Response $response
     ) {
         parent::__construct($request, $response);
         $incidentRepo = new IncidentRepository();

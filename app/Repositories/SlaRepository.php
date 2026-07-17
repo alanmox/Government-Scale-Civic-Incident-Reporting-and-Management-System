@@ -24,8 +24,8 @@ final class SlaRepository extends BaseRepository
             SELECT 
                 s.id, s.category_id, s.priority, s.resolve_hours, s.escalate_hours,
                 c.name as category_name
-            FROM {$this->table} s
-            JOIN incident_categories c ON s.category_id = c.id
+            FROM `{$this->table}` s
+            JOIN `incident_categories` c ON s.category_id = c.id
             WHERE s.deleted_at IS NULL AND c.deleted_at IS NULL
             ORDER BY c.name ASC, s.priority ASC
         ";
@@ -46,9 +46,9 @@ final class SlaRepository extends BaseRepository
      */
     public function findByCategoryAndPriority(string $categoryId, string $priority): ?array
     {
-        $sql = "SELECT * FROM {$this->table} WHERE category_id = :category_id AND priority = :priority AND deleted_at IS NULL LIMIT 1";
+        $sql = "SELECT * FROM `{$this->table}` WHERE category_id = :category_id AND priority = :priority AND deleted_at IS NULL LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->bindValue(':category_id', UUIDHelper::toBinary($categoryId), PDO::PARAM_LOB);
+        $stmt->bindValue(':category_id', UUIDHelper::toBinary($categoryId));
         $stmt->bindValue(':priority', $priority, PDO::PARAM_STR);
         $stmt->execute();
         

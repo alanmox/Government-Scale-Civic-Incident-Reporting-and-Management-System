@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Request;
+use App\Core\Response;
 use App\Exceptions\FileUploadException;
 use App\Exceptions\ValidationException;
 use App\Models\Incident;
@@ -21,8 +23,8 @@ final class IncidentController extends BaseController
     private CategoryRepository $categoryRepo;
 
     public function __construct(
-        \App\Core\Request $request, 
-        \App\Core\Response $response
+        Request $request, 
+        Response $response
     ) {
         parent::__construct($request, $response);
     }

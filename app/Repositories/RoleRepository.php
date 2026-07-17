@@ -33,6 +33,7 @@ final class RoleRepository extends BaseRepository
                 FROM `permissions` p
                 INNER JOIN `role_permissions` rp ON rp.permission_id = p.id
                 WHERE rp.role_id = :roleId
+                  AND p.deleted_at IS NULL
                 ORDER BY p.module, p.name';
 
         return $this->execute($sql, ['roleId' => $roleId])->fetchAll();

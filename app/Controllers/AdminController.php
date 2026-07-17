@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Request;
+use App\Core\Response;
 use App\Repositories\CategoryRepository;
 use App\Repositories\SlaRepository;
 use App\Services\BackupService;
@@ -12,6 +14,33 @@ use App\Utilities\UUIDHelper;
 
 final class AdminController extends BaseController
 {
+    private ?SlaService $slaService = null;
+    private ?CategoryRepository $categoryRepo = null;
+    private ?BackupService $backupService = null;
+
+    public function __construct(Request $request, Response $response)
+    {
+        parent::__construct($request, $response);
+    }
+
+    private function getSlaService(): SlaService
+    {
+        $this->slaService ??= new SlaService(new SlaRepository());
+        return $this->slaService;
+    }
+
+    private function getCategoryRepo(): CategoryRepository
+    {
+        $this->categoryRepo ??= new CategoryRepository();
+        return $this->categoryRepo;
+    }
+
+    private function getBackupService(): BackupService
+    {
+        $this->backupService ??= new BackupService();
+        return $this->backupService;
+    }
+
     public function users(): void
     {
         $this->requireAuth();
@@ -58,17 +87,11 @@ final class AdminController extends BaseController
     {
         $this->requireAuth();
 
-        $slaRepo = new SlaRepository();
-        $slaService = new SlaService($slaRepo);
-
-        $categoryRepo = new CategoryRepository();
-        $categories = $categoryRepo->findAll();
-
         $this->view('admin/sla', [
             'pageTitle'   => 'SLA Management',
             'breadcrumbs' => [['label' => 'Administration'], ['label' => 'SLA Management']],
-            'slas'        => $slaService->getAllSlas(),
-            'categories'  => $categories
+            'slas'        => $this->getSlaService()->getAllSlas(),
+            'categories'  => $this->getCategoryRepo()->findAll(),
         ]);
     }
 
@@ -81,11 +104,8 @@ final class AdminController extends BaseController
             $this->redirect('/login');
         }
 
-        $slaRepo = new SlaRepository();
-        $slaService = new SlaService($slaRepo);
-
         try {
-            $slaService->saveSla(UUIDHelper::toString($userId), $this->request->all());
+            $this->getSlaService()->saveSla(UUIDHelper::toString($userId), $this->request->all());
             $this->session->flash('success', 'SLA definition saved successfully.');
         } catch (\Exception $e) {
             $this->session->flash('error', $e->getMessage());
@@ -105,9 +125,7 @@ final class AdminController extends BaseController
 
         $id = $this->request->input('id', '');
         if ($id) {
-            $slaRepo = new SlaRepository();
-            $slaService = new SlaService($slaRepo);
-            $slaService->deleteSla(UUIDHelper::toString($userId), $id);
+            $this->getSlaService()->deleteSla(UUIDHelper::toString($userId), $id);
             $this->session->flash('success', 'SLA definition deleted.');
         }
 
@@ -118,13 +136,10 @@ final class AdminController extends BaseController
     {
         $this->requireAuth();
 
-        $backupService = new BackupService();
-        $backups = $backupService->getBackups();
-
         $this->view('admin/backup', [
             'pageTitle'   => 'System Backup',
             'breadcrumbs' => [['label' => 'Administration'], ['label' => 'System Backup']],
-            'backups'     => $backups
+            'backups'     => $this->getBackupService()->getBackups(),
         ]);
     }
 
@@ -132,9 +147,8 @@ final class AdminController extends BaseController
     {
         $this->requireAuth();
 
-        $backupService = new BackupService();
         try {
-            $backupService->createDatabaseBackup();
+            $this->getBackupService()->createDatabaseBackup();
             $this->session->flash('success', 'System backup completed successfully.');
         } catch (\Exception $e) {
             $this->session->flash('error', $e->getMessage());
@@ -152,8 +166,7 @@ final class AdminController extends BaseController
             $this->redirect('/admin/backup');
         }
 
-        $backupService = new BackupService();
-        $filepath = $backupService->getBackupPath($filename);
+        $filepath = $this->getBackupService()->getBackupPath($filename);
 
         if (!$filepath) {
             $this->session->flash('error', 'Backup file not found.');
