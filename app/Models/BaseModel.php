@@ -76,6 +76,16 @@ abstract class BaseModel
     // ── Serialization ──────────────────────────────────────────────────────────
 
     /**
+     * Returns all attributes as an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
      * Returns all attributes as an array (for passing to views or APIs).
      *
      * @return array<string, mixed>

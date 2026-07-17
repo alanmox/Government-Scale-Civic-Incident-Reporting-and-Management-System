@@ -106,6 +106,10 @@ abstract class BaseController
     {
         $permissions = $this->session->get('permissions', []);
 
+        if (in_array('*', $permissions, true)) {
+            return;
+        }
+
         if (!in_array($permission, $permissions, true)) {
             if ($this->request->isApi()) {
                 $this->apiError('Insufficient permissions.', null, 403);

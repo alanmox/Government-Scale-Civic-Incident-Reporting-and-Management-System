@@ -2,7 +2,7 @@
 
 <div class="row mb-4">
     <div class="col-12">
-        <h4 class="mb-3 text-primary">Welcome back, <?= e($session->get('user_name')) ?></h4>
+        <h4 class="mb-3 text-black">Welcome back, <?= e($session->get('user_name')) ?></h4>
         <p class="text-muted">Here is an overview of your civic incident reports.</p>
     </div>
 </div>
