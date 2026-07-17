@@ -36,7 +36,7 @@
         <?php if (isset($pageTitle)): ?>
         <div class="page-header">
             <div>
-                <h1 class="page-title"><?= e($pageTitle) ?></h1>
+                <h1 class="page-title text-black"><?= e($pageTitle) ?></h1>
                 <?php if (isset($pageSubtitle)): ?>
                     <p class="page-subtitle"><?= e($pageSubtitle) ?></p>
                 <?php endif; ?>
