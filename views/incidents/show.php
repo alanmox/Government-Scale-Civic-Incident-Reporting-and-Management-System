@@ -10,7 +10,7 @@ ob_start();
 <a href="<?= url('incidents/' . $incident->getUuid() . '/receipt') ?>" class="btn btn-outline-primary me-2">
     <i class="bi bi-download me-1"></i> Download Receipt
 </a>
-<?php if ($session->hasPermission('incident.verify') && $incident->getStatus() === 'submitted'): ?>
+<?php if (in_array('incident.verify', $session->get('permissions', []), true) && $incident->getStatus() === 'submitted'): ?>
     <button class="btn btn-success"><i class="bi bi-check-circle me-1"></i> Verify</button>
 <?php endif; ?>
 <?php

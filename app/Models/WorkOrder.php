@@ -25,6 +25,11 @@ class WorkOrder extends BaseModel
         ];
     }
 
+    public function getUuid(): string
+    {
+        return (string) ($this->attributes['uuid_str'] ?? '');
+    }
+
     public function getReferenceNumber(): string
     {
         return (string) ($this->attributes['reference_number'] ?? '');

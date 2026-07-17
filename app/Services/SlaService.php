@@ -30,15 +30,15 @@ final class SlaService extends BaseService
         $escalateHours = (int)($data['escalate_hours'] ?? 0);
 
         if (empty($categoryId) || empty($priority)) {
-            throw new ValidationException("Category and priority are required.");
+            throw new ValidationException(['general' => ['Category and priority are required.']]);
         }
 
         if ($resolveHours <= 0 || $escalateHours <= 0) {
-            throw new ValidationException("Hours must be greater than zero.");
+            throw new ValidationException(['general' => ['Hours must be greater than zero.']]);
         }
 
         if ($escalateHours >= $resolveHours) {
-            throw new ValidationException("Escalation hours must be less than resolution hours.");
+            throw new ValidationException(['general' => ['Escalation hours must be less than resolution hours.']]);
         }
 
         $existing = $this->repository->findByCategoryAndPriority($categoryId, $priority);

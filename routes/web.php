@@ -42,8 +42,8 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     $router->get('/incidents/create', [IncidentController::class, 'create']);
     $router->post('/incidents', [IncidentController::class, 'store'], [CsrfMiddleware::class]);
     $router->get('/incidents/my', [IncidentController::class, 'indexMy']);
-    $router->get('/incidents/{id}', [IncidentController::class, 'show']);
     $router->get('/incidents/drafts', [IncidentController::class, 'drafts']);
+    $router->get('/incidents/{id}', [IncidentController::class, 'show']);
 
     // Citizen Features
     $router->get('/my-impact', [CitizenController::class, 'impact']);

@@ -18,15 +18,18 @@ final class ApiLocationController
         $this->pdo = Connection::getInstance()->getPdo();
     }
 
-    public function regions(Request $request, Response $response): void
+    public function regions(): void
     {
+        $response = new Response();
         $stmt = $this->pdo->query("SELECT HEX(id) as id, name FROM regions ORDER BY name ASC");
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $response->apiSuccess($data);
     }
 
-    public function districts(Request $request, Response $response): void
+    public function districts(): void
     {
+        $request = new Request();
+        $response = new Response();
         $regionId = $request->query('region_id', '');
         if (empty($regionId)) {
             $response->apiError('region_id is required');
@@ -40,8 +43,10 @@ final class ApiLocationController
         $response->apiSuccess($data);
     }
 
-    public function wards(Request $request, Response $response): void
+    public function wards(): void
     {
+        $request = new Request();
+        $response = new Response();
         $districtId = $request->query('district_id', '');
         if (empty($districtId)) {
             $response->apiError('district_id is required');
@@ -55,8 +60,10 @@ final class ApiLocationController
         $response->apiSuccess($data);
     }
 
-    public function villages(Request $request, Response $response): void
+    public function villages(): void
     {
+        $request = new Request();
+        $response = new Response();
         $wardId = $request->query('ward_id', '');
         if (empty($wardId)) {
             $response->apiError('ward_id is required');

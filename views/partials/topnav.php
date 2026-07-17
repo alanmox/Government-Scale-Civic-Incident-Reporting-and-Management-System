@@ -25,7 +25,6 @@ $unreadNotifications = $session->get('unread_notifications', 0);
     <!-- Global Search -->
     <div class="topnav-search d-none d-md-block">
         <form action="<?= url('incidents') ?>" method="GET">
-            <?= csrf_field() ?>
             <input type="search" name="q"
                    placeholder="<?= e(__('search')) ?> incidents, reports..."
                    value="<?= e($_GET['q'] ?? '') ?>"

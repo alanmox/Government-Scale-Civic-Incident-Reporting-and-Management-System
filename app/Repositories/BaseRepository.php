@@ -138,6 +138,26 @@ abstract class BaseRepository implements RepositoryInterface
         return (int) $this->pdo->query($sql)->fetchColumn();
     }
 
+    // ── Transaction Support ────────────────────────────────────────────────────
+
+    /**
+     * Executes a callback within a database transaction.
+     *
+     * @param callable $callback
+     * @throws DatabaseException
+     */
+    public function transaction(callable $callback): void
+    {
+        try {
+            $this->pdo->beginTransaction();
+            $callback();
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
     // ── Protected Query Helpers ────────────────────────────────────────────────
 
     /**

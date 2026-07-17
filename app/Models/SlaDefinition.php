@@ -20,11 +20,6 @@ final class SlaDefinition extends BaseModel
     public function __construct(array $data = [])
     {
         parent::__construct($data);
-    }
-
-    protected function load(array $data): void
-    {
-        $this->fill($data);
         $this->categoryId = $data['category_id'] ?? '';
         $this->priority = $data['priority'] ?? '';
         $this->resolveHours = (int)($data['resolve_hours'] ?? 72);

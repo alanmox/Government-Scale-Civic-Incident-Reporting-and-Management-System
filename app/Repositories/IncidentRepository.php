@@ -13,6 +13,21 @@ final class IncidentRepository extends BaseRepository implements Searchable
     protected string $primaryKey = 'id';
     protected bool   $softDeletes = true;
 
+    public function findById(string $id): ?array
+    {
+        $sql = "SELECT i.*, BIN_TO_UUID(i.id) AS uuid_str, c.name as category_name, u.full_name as citizen_name
+                FROM `{$this->table}` i
+                LEFT JOIN `incident_categories` c ON i.category_id = c.id
+                LEFT JOIN `users` u ON i.citizen_id = u.id
+                WHERE i.`{$this->primaryKey}` = :id"
+             . ($this->softDeletes ? ' AND i.deleted_at IS NULL' : '');
+
+        $stmt = $this->execute($sql, ['id' => $id]);
+        $row  = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
     /**
      * Get incidents for a specific citizen.
      */
