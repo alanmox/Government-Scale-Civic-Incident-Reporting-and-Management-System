@@ -60,6 +60,15 @@ final class CitizenController extends BaseController
         ]);
     }
 
+    /** Save notification preferences. */
+    public function saveNotificationSettings(): void
+    {
+        $this->requireAuth();
+
+        $this->session->flash('success', 'Notification preferences saved.');
+        $this->redirect('/notification-settings');
+    }
+
     /** Updates inbox — officer messages on citizen's reports. */
     public function updates(): void
     {

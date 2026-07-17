@@ -14,4 +14,20 @@ final class NotificationController extends BaseController
             'pageTitle' => __('nav.notifications'),
         ]);
     }
+
+    public function markAllRead(): void
+    {
+        $this->requireAuth();
+
+        $this->session->set('unread_notifications', 0);
+        $this->redirect('/notifications');
+    }
+
+    public function unreadCount(): void
+    {
+        $this->requireAuth();
+
+        $count = $this->session->get('unread_notifications', 0);
+        $this->json(['data' => ['count' => $count]]);
+    }
 }

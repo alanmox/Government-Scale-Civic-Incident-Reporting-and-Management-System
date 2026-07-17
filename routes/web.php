@@ -2,22 +2,10 @@
 
 declare(strict_types=1);
 
-/**
- * Web Routes
- *
- * Registered on the $router variable provided by Router::loadRoutes().
- * All handler classes follow [ControllerClass::class, 'methodName'] syntax.
- *
- * Middleware applied here:
- *   'guest' = App\Middleware\GuestMiddleware
- *   'auth'  = App\Middleware\AuthMiddleware
- *   'csrf'  = App\Middleware\CsrfMiddleware
- *
- * Phase 0: Only root and placeholder routes.
- * Modules added in Phase 1+ as controllers are built.
- */
-
+use App\Controllers\AdminController;
+use App\Controllers\AnalyticsController;
 use App\Controllers\AuthController;
+use App\Controllers\CitizenController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
 use App\Controllers\IncidentController;
@@ -46,31 +34,53 @@ $router->group(['middleware' => [GuestMiddleware::class]], function ($router): v
 $router->group(['middleware' => [AuthMiddleware::class]], function ($router): void {
     $router->post('/logout', [AuthController::class, 'logout'], [CsrfMiddleware::class]);
 
-    // Dashboard — role-specific view served from one controller
+    // Dashboard
     $router->get('/dashboard', [DashboardController::class, 'index']);
 
-    // [Phase 1+] Additional routes added here as modules are built:
-    // Incidents, Profile, Admin, Reports, etc.
-    
     // Incidents
     $router->get('/incidents', [IncidentController::class, 'index']);
     $router->get('/incidents/create', [IncidentController::class, 'create']);
     $router->post('/incidents', [IncidentController::class, 'store'], [CsrfMiddleware::class]);
     $router->get('/incidents/my', [IncidentController::class, 'indexMy']);
     $router->get('/incidents/{id}', [IncidentController::class, 'show']);
+    $router->get('/incidents/drafts', [IncidentController::class, 'drafts']);
+
+    // Citizen Features
+    $router->get('/my-impact', [CitizenController::class, 'impact']);
+    $router->get('/updates', [CitizenController::class, 'updates']);
+
+    // Notification Settings
+    $router->get('/notification-settings', [CitizenController::class, 'notificationSettings']);
+    $router->post('/notification-settings/save', [CitizenController::class, 'saveNotificationSettings'], [CsrfMiddleware::class]);
 
     // Notifications
     $router->get('/notifications', [NotificationController::class, 'index']);
+    $router->post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'], [CsrfMiddleware::class]);
 
-    // Verification Queue (Officers)
+    // Notification Unread Count (AJAX)
+    $router->get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+
+    // Profile
+    $router->get('/profile', function () {
+        \App\Core\SessionManager::getInstance()->flash('info', 'Profile page coming soon.');
+        header('Location: /dashboard');
+        exit;
+    });
+    $router->get('/profile/settings', function () {
+        \App\Core\SessionManager::getInstance()->flash('info', 'Profile settings coming soon.');
+        header('Location: /dashboard');
+        exit;
+    });
+
+    // Verification Queue
     $router->get('/verification', [App\Controllers\VerificationController::class, 'queue']);
     $router->post('/verification/process', [App\Controllers\VerificationController::class, 'process'], [CsrfMiddleware::class]);
 
-    // Assignment (Supervisors/Admins)
+    // Assignments
     $router->get('/assignments', [App\Controllers\AssignmentController::class, 'index']);
     $router->post('/assignments/assign', [App\Controllers\AssignmentController::class, 'assign'], [CsrfMiddleware::class]);
 
-    // Work Orders (Officers)
+    // Work Orders
     $router->get('/work-orders', [App\Controllers\WorkOrderController::class, 'index']);
     $router->get('/work-orders/{id}', [App\Controllers\WorkOrderController::class, 'show']);
     $router->post('/work-orders/{id}/progress', [App\Controllers\WorkOrderController::class, 'updateProgress'], [CsrfMiddleware::class]);
@@ -78,14 +88,16 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     // Secure Attachments
     $router->get('/attachments/{id}', [App\Controllers\AttachmentController::class, 'download']);
 
-    // Reports and Exports
+    // Reports & Exports
+    $router->get('/reports', [App\Controllers\ReportController::class, 'index']);
     $router->get('/reports/export-incidents', [App\Controllers\ReportController::class, 'exportCsv']);
     $router->get('/incidents/{id}/receipt',   [App\Controllers\ReportController::class, 'downloadReceipt']);
 
-    // ── SPRINT 1: New Navigation Routes ───────────────────────────────────────
-
-    // Analytics & KPIs
-    $router->get('/analytics', [App\Controllers\AnalyticsController::class, 'index']);
+    // Analytics
+    $router->get('/analytics', [AnalyticsController::class, 'index']);
+    $router->get('/analytics/sla-compliance', [AnalyticsController::class, 'index']);
+    $router->get('/analytics/response-times', [AnalyticsController::class, 'index']);
+    $router->get('/analytics/performance', [AnalyticsController::class, 'index']);
 
     // Escalations
     $router->get('/escalations', [App\Controllers\EscalationController::class, 'index']);
@@ -93,24 +105,33 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
     // National Incident Map
     $router->get('/map', [App\Controllers\MapController::class, 'index']);
 
-    // Admin Audit Logs (live)
+    // Help
+    $router->get('/help', function () {
+        \App\Core\SessionManager::getInstance()->flash('info', 'Help documentation coming soon.');
+        header('Location: /dashboard');
+        exit;
+    });
+
+    // ── Admin Routes ───────────────────────────────────────────────────────────
+    $router->get('/admin/users', [AdminController::class, 'users']);
+    $router->get('/admin/roles', [AdminController::class, 'roles']);
+    $router->get('/admin/categories', [AdminController::class, 'categories']);
+    $router->get('/admin/workflow', [AdminController::class, 'workflow']);
+    $router->get('/admin/settings', [AdminController::class, 'settings']);
     $router->get('/admin/audit-logs', [App\Controllers\AuditLogController::class, 'index']);
 
-    // Admin SLA Management
-    $router->get('/admin/sla', [App\Controllers\AdminController::class, 'sla']);
-    $router->post('/admin/sla', [App\Controllers\AdminController::class, 'storeSla'], [CsrfMiddleware::class]);
-    $router->post('/admin/sla/delete', [App\Controllers\AdminController::class, 'deleteSla'], [CsrfMiddleware::class]);
+    // Admin SLA
+    $router->get('/admin/sla', [AdminController::class, 'sla']);
+    $router->post('/admin/sla', [AdminController::class, 'storeSla'], [CsrfMiddleware::class]);
+    $router->post('/admin/sla/delete', [AdminController::class, 'deleteSla'], [CsrfMiddleware::class]);
 
     // Admin System Backup
-    $router->get('/admin/backup', [App\Controllers\AdminController::class, 'backup']);
-    $router->post('/admin/backup/create', [App\Controllers\AdminController::class, 'createBackup'], [CsrfMiddleware::class]);
-    $router->get('/admin/backup/download', [App\Controllers\AdminController::class, 'downloadBackup']);
-
-    // Citizen — Incident Drafts (stub)
-    $router->get('/incidents/drafts', [App\Controllers\IncidentController::class, 'drafts']);
+    $router->get('/admin/backup', [AdminController::class, 'backup']);
+    $router->post('/admin/backup/create', [AdminController::class, 'createBackup'], [CsrfMiddleware::class]);
+    $router->get('/admin/backup/download', [AdminController::class, 'downloadBackup']);
 });
 
-// ── Locale Switcher (public — no auth needed) ──────────────────────────────────
+// ── Locale Switcher (public) ──────────────────────────────────────────────────
 $router->get('/locale/{code}', function () {
     $code = $_SERVER['REQUEST_URI'] ?? '';
     preg_match('/\/locale\/([a-z]{2})/', $code, $m);

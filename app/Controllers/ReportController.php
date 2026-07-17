@@ -23,6 +23,16 @@ final class ReportController extends BaseController
     }
 
     /**
+     * Reports landing page.
+     */
+    public function index(): void
+    {
+        $this->requireAuth();
+
+        $this->redirect('/reports/export-incidents');
+    }
+
+    /**
      * Download a CSV of all incidents (Admin/Supervisor).
      */
     public function exportCsv(): void

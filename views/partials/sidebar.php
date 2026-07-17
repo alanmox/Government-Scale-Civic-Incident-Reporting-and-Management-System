@@ -170,7 +170,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 function pollNotifications() {
-    fetch('<?= url('api/v1/notifications/unread-count') ?>', {
+    fetch('<?= url('notifications/unread-count') ?>', {
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
     .then(r => r.json())

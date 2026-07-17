@@ -70,13 +70,13 @@
                         <i class="bi bi-file-earmark-spreadsheet me-2"></i> Export All Incidents (CSV)
                         <i class="bi bi-download"></i>
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mt-2">
+                    <a href="<?= url('admin/users') ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center mt-2">
                         User Management
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <a href="<?= url('admin/roles') ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         Role & Permissions
                     </a>
-                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <a href="<?= url('admin/settings') ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                         System Configuration
                     </a>
                 </div>
