@@ -53,4 +53,32 @@ final class WorkflowLogRepository extends BaseRepository
                 
         return $this->execute($sql, ['incidentId' => $incidentId])->fetchAll();
     }
+
+    /**
+     * Fetches audit log entries with incident and actor details.
+     */
+    public function findAuditLogs(int $limit = 50, int $offset = 0): array
+    {
+        $sql = "SELECT wl.action, wl.from_status, wl.to_status, wl.comments, wl.created_at,
+                       i.reference_number,
+                       BIN_TO_UUID(i.id) as incident_uuid,
+                       u.full_name as actor_name
+                FROM `{$this->table}` wl
+                JOIN `incidents` i ON wl.incident_id = i.id
+                LEFT JOIN `users` u ON wl.actor_id = u.id
+                ORDER BY wl.created_at DESC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function countAll(): int
+    {
+        $sql = "SELECT COUNT(*) FROM `{$this->table}`";
+        return (int) $this->pdo->query($sql)->fetchColumn();
+    }
 }

@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Exceptions\FileUploadException;
 use App\Exceptions\ValidationException;
+use App\Models\Incident;
+use App\Repositories\AttachmentRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\IncidentRepository;
+use App\Services\FileUploadService;
 use App\Services\IncidentService;
 use App\Utilities\UUIDHelper;
 
@@ -21,10 +25,30 @@ final class IncidentController extends BaseController
         \App\Core\Response $response
     ) {
         parent::__construct($request, $response);
-        
-        $this->incidentRepo = new IncidentRepository();
-        $this->categoryRepo = new CategoryRepository();
-        $this->incidentService = new IncidentService($this->incidentRepo, $this->categoryRepo);
+    }
+
+    /**
+     * Lazy-load repositories to avoid constructor coupling.
+     */
+    private function getIncidentRepo(): IncidentRepository
+    {
+        $this->incidentRepo ??= new IncidentRepository();
+        return $this->incidentRepo;
+    }
+
+    private function getCategoryRepo(): CategoryRepository
+    {
+        $this->categoryRepo ??= new CategoryRepository();
+        return $this->categoryRepo;
+    }
+
+    private function getIncidentService(): IncidentService
+    {
+        $this->incidentService ??= new IncidentService(
+            $this->getIncidentRepo(),
+            $this->getCategoryRepo()
+        );
+        return $this->incidentService;
     }
 
     /**
@@ -43,7 +67,7 @@ final class IncidentController extends BaseController
             $limit = 20;
             $offset = ($page - 1) * $limit;
 
-            $incidents = $this->incidentRepo->findFiltered($status, $limit, $offset);
+            $incidents = $this->getIncidentRepo()->findFiltered($status, $limit, $offset);
         } else {
             $this->redirect('/incidents/my');
             return;
@@ -66,7 +90,7 @@ final class IncidentController extends BaseController
         $userId = $this->session->userId();
         $binUserId = UUIDHelper::toBinary($userId);
         
-        $incidents = $this->incidentRepo->findByCitizen($binUserId);
+        $incidents = $this->getIncidentRepo()->findByCitizen($binUserId);
         
         $this->view('incidents/my_list', [
             'pageTitle' => __('nav.my_reports'),
@@ -81,7 +105,7 @@ final class IncidentController extends BaseController
     {
         $this->requireAuth();
         
-        $categories = $this->categoryRepo->findActive();
+        $categories = $this->getCategoryRepo()->findActive();
         
         $this->view('incidents/create', [
             'pageTitle' => __('incident.report'),
@@ -100,22 +124,21 @@ final class IncidentController extends BaseController
             $data = $this->request->all();
             $userId = $this->session->userId();
             
-            $incident = $this->incidentService->reportIncident($data, $userId);
+            $incident = $this->getIncidentService()->reportIncident($data, $userId);
             
-            // Phase 5: Process Attachments
             if (!empty($_FILES['attachments']['name'][0])) {
-                $fileService = new \App\Services\FileUploadService();
-                $attRepo = new \App\Repositories\AttachmentRepository();
+                $fileService = new FileUploadService();
+                $attRepo = new AttachmentRepository();
                 
                 try {
                     $uploadedFiles = $fileService->handleUpload($_FILES['attachments']);
                     
                     foreach ($uploadedFiles as $fileData) {
                         $attRepo->create([
-                            'id'            => \App\Utilities\UUIDHelper::toBinary(\App\Utilities\UUIDHelper::generate()),
+                            'id'            => UUIDHelper::toBinary(UUIDHelper::generate()),
                             'entity_type'   => 'incident',
-                            'entity_id'     => \App\Utilities\UUIDHelper::toBinary($incident->getUuid()),
-                            'uploader_id'   => \App\Utilities\UUIDHelper::toBinary($userId),
+                            'entity_id'     => UUIDHelper::toBinary($incident->getUuid()),
+                            'uploader_id'   => UUIDHelper::toBinary($userId),
                             'original_name' => $fileData['original_name'],
                             'stored_name'   => $fileData['stored_name'],
                             'file_path'     => $fileData['file_path'],
@@ -124,8 +147,7 @@ final class IncidentController extends BaseController
                             'is_image'      => $fileData['is_image'] ? 1 : 0
                         ]);
                     }
-                } catch (\App\Exceptions\FileUploadException $fe) {
-                    // Log but don't fail the whole incident creation if upload fails
+                } catch (FileUploadException $fe) {
                     error_log("Attachment Error for Incident {$incident->getReferenceNumber()}: " . $fe->getMessage());
                     $this->session->flash('errors', ['attachments' => [$fe->getMessage()]]);
                 }
@@ -161,14 +183,13 @@ final class IncidentController extends BaseController
         $uuid = $this->request->routeParam('id');
         $binId = UUIDHelper::toBinary($uuid);
         
-        $incidentData = $this->incidentRepo->findById($binId);
+        $incidentData = $this->getIncidentRepo()->findById($binId);
         
         if (!$incidentData) {
             $this->redirectWithError('/dashboard', __('incident.not_found'));
             return;
         }
 
-        // Simplistic authorization check for demonstration
         $userIdBin = UUIDHelper::toBinary($this->session->userId());
         $permissions = $this->session->get('permissions', []);
         if ($incidentData['citizen_id'] !== $userIdBin && !in_array('incident.view', $permissions, true) && !in_array('*', $permissions, true)) {
@@ -176,11 +197,10 @@ final class IncidentController extends BaseController
              return;
         }
         
-        // Also fetch category details for display
-        $category = $this->categoryRepo->findById($incidentData['category_id']);
+        $category = $this->getCategoryRepo()->findById($incidentData['category_id']);
         $incidentData['category_name'] = $category['name'] ?? 'Unknown';
 
-        $incident = new \App\Models\Incident($incidentData);
+        $incident = new Incident($incidentData);
         
         $this->view('incidents/show', [
             'pageTitle' => $incident->getReferenceNumber(),

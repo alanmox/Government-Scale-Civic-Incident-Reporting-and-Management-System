@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers\Api;
 
+use App\Core\Request;
+use App\Core\Response;
 use App\Repositories\IncidentRepository;
 use App\Utilities\UUIDHelper;
 
@@ -11,7 +13,7 @@ final class ApiIncidentController extends ApiController
 {
     private IncidentRepository $incidentRepo;
 
-    public function __construct(\App\Core\Request $request, \App\Core\Response $response)
+    public function __construct(Request $request, Response $response)
     {
         parent::__construct($request, $response);
         $this->incidentRepo = new IncidentRepository();

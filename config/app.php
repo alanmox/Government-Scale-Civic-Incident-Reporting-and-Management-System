@@ -16,7 +16,11 @@ return [
     'url'       => $_ENV['APP_URL']      ?? 'http://localhost',
     'timezone'  => $_ENV['APP_TIMEZONE'] ?? 'Africa/Dar_es_Salaam',
     'locale'    => $_ENV['APP_LOCALE']   ?? 'en',
-    'encryption_key' => $_ENV['APP_ENCRYPTION_KEY'] ?? '',
+    'encryption_key' => $_ENV['APP_ENCRYPTION_KEY'] ?? (
+        filter_var($_ENV['APP_ENV'] ?? 'production', FILTER_VALIDATE_BOOL)
+            ? throw new \RuntimeException('APP_ENCRYPTION_KEY must be set in production')
+            : 'CHANGE_ME_IN_PRODUCTION'
+    ),
     'version'   => '1.0.0',
 
     'pagination' => [

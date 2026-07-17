@@ -32,7 +32,7 @@ abstract class BaseModel
      *
      * @param array<string, mixed> $data
      */
-    public function fill(array $data): self
+    public function fill(array $data): static
     {
         $fillable = $this->getFillable();
 

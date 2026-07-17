@@ -236,7 +236,6 @@ final class Request
     {
         $path = parse_url($this->uri, PHP_URL_PATH) ?? '/';
 
-        // Strip script name prefix if running in subdirectory
         $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
         if ($script !== '/' && str_starts_with($path, $script)) {
             $path = substr($path, strlen($script));

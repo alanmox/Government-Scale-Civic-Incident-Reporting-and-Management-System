@@ -24,7 +24,7 @@ final class SlaDefinition extends BaseModel
 
     protected function load(array $data): void
     {
-        parent::load($data);
+        $this->fill($data);
         $this->categoryId = $data['category_id'] ?? '';
         $this->priority = $data['priority'] ?? '';
         $this->resolveHours = (int)($data['resolve_hours'] ?? 72);

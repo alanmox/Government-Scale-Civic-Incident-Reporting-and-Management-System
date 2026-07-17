@@ -17,7 +17,7 @@ final class FileUploadService extends BaseService
     ];
     private int $maxSizeBytes = 10 * 1024 * 1024; // 10MB default
 
-    public function __construct(string $storagePath = null)
+    public function __construct(?string $storagePath = null)
     {
         parent::__construct();
         // Use a secure directory outside public access by default

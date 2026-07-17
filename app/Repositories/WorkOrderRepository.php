@@ -71,8 +71,33 @@ final class WorkOrderRepository extends BaseRepository implements Searchable
                 FROM `work_order_updates` u
                 JOIN `users` o ON u.officer_id = o.id
                 WHERE u.work_order_id = :woId
+                  AND u.deleted_at IS NULL
                 ORDER BY u.created_at DESC";
         return $this->execute($sql, ['woId' => $workOrderId])->fetchAll();
+    }
+
+    /**
+     * Get updates for incidents owned by a specific citizen.
+     */
+    public function getUpdatesForCitizen(string $citizenId, int $limit = 50): array
+    {
+        $sql = "SELECT wou.notes, wou.progress_percent, wou.is_internal, wou.created_at,
+                       i.reference_number, BIN_TO_UUID(i.id) as incident_uuid,
+                       u.full_name as officer_name
+                FROM `work_order_updates` wou
+                JOIN `work_orders` wo ON wou.work_order_id = wo.id
+                JOIN `incidents` i ON wo.incident_id = i.id
+                LEFT JOIN `users` u ON wou.officer_id = u.id
+                WHERE i.citizen_id = :citizenId 
+                  AND wou.is_internal = 0
+                  AND wou.deleted_at IS NULL
+                ORDER BY wou.created_at DESC LIMIT :limit";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':citizenId', $citizenId);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     /**

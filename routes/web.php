@@ -98,12 +98,12 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
 
     // Admin SLA Management (stub — Phase 9)
     $router->get('/admin/sla', [App\Controllers\AdminController::class, 'sla']);
-    $router->post('/admin/sla', [App\Controllers\AdminController::class, 'storeSla']);
-    $router->post('/admin/sla/delete', [App\Controllers\AdminController::class, 'deleteSla']);
+    $router->post('/admin/sla', [App\Controllers\AdminController::class, 'storeSla'], [CsrfMiddleware::class]);
+    $router->post('/admin/sla/delete', [App\Controllers\AdminController::class, 'deleteSla'], [CsrfMiddleware::class]);
 
     // Admin System Backup (Phase 9)
     $router->get('/admin/backup', [App\Controllers\AdminController::class, 'backup']);
-    $router->post('/admin/backup/create', [App\Controllers\AdminController::class, 'createBackup']);
+    $router->post('/admin/backup/create', [App\Controllers\AdminController::class, 'createBackup'], [CsrfMiddleware::class]);
     $router->get('/admin/backup/download', [App\Controllers\AdminController::class, 'downloadBackup']);
 
     // Citizen — Incident Drafts (stub)
@@ -112,13 +112,14 @@ $router->group(['middleware' => [AuthMiddleware::class]], function ($router): vo
 
 // ── Locale Switcher (public — no auth needed) ──────────────────────────────────
 $router->get('/locale/{code}', function () {
-    $code = $_SERVER['REQUEST_URI'];
+    $code = $_SERVER['REQUEST_URI'] ?? '';
     preg_match('/\/locale\/([a-z]{2})/', $code, $m);
     $allowed = ['en', 'sw'];
     if (isset($m[1]) && in_array($m[1], $allowed, true)) {
         $_SESSION['locale'] = $m[1];
     }
-    header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
+    $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+    header('Location: ' . $referer);
     exit;
 });
 

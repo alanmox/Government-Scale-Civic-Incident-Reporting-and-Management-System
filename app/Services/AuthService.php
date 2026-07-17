@@ -34,10 +34,7 @@ final class AuthService extends BaseService
      */
     public function login(string $identifier, string $password, string $ip, string $userAgent): User
     {
-        error_log('[AUTH DEBUG] Starting login for: ' . $identifier);
-        
         $userData = $this->userRepo->findByEmailOrUsername($identifier);
-        error_log('[AUTH DEBUG] find result: ' . ($userData ? 'FOUND' : 'NOT FOUND'));
 
         if (!$userData) {
             $this->logFailure(null, $ip, $userAgent, 'user_not_found');
@@ -46,7 +43,6 @@ final class AuthService extends BaseService
 
         $user = new User($userData);
         $userId = $user->getId();
-        error_log('[AUTH DEBUG] User ID (hex): ' . bin2hex($userId));
 
         // Check if locked
         if ($user->isLockedOut()) {
@@ -56,7 +52,6 @@ final class AuthService extends BaseService
 
         // Verify password
         $passOk = PasswordHasher::verify($password, $userData['password_hash']);
-        error_log('[AUTH DEBUG] Password verify: ' . ($passOk ? 'OK' : 'FAIL'));
         
         if (!$passOk) {
             $attempts = $this->userRepo->incrementFailedAttempts($userId);
@@ -80,7 +75,6 @@ final class AuthService extends BaseService
         }
 
         // Success!
-        error_log('[AUTH DEBUG] Login successful, initializing session...');
         
         $this->userRepo->resetFailedAttempts($userId);
         $this->userRepo->recordLogin($userId, $ip);

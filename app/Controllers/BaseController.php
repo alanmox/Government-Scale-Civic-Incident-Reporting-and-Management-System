@@ -109,7 +109,7 @@ abstract class BaseController
         if (!in_array($permission, $permissions, true)) {
             if ($this->request->isApi()) {
                 $this->apiError('Insufficient permissions.', null, 403);
-                exit;
+                return;
             }
             $this->response->abort(403, "You do not have permission: [{$permission}]");
         }
@@ -123,11 +123,10 @@ abstract class BaseController
         if (!$this->session->isLoggedIn()) {
             if ($this->request->isApi()) {
                 $this->apiError('Authentication required.', null, 401);
-                exit;
+                return;
             }
             $this->session->flash('error', 'Please log in to continue.');
             $this->redirect('/login');
-            exit;
         }
     }
 }

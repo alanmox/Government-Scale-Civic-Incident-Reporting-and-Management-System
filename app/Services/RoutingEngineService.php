@@ -57,15 +57,5 @@ final class RoutingEngineService extends BaseService
         if (!$incidentData) {
             return;
         }
-
-        // In a full implementation, this would look up complex rules in a `routing_rules` table.
-        // For Phase 3, we rely on the `agency_id` that was set via the Category default during submission.
-        
-        // If we needed to push it down to a district level, we would look up the district's mapping here.
-        // e.g. "If agency = Water Board AND district = Kinondoni, set department_id = Kinondoni Water Dept"
-        
-        // Example:
-        // $departmentId = $this->findDepartmentForLocation($incidentData['agency_id'], $incidentData['district_id']);
-        // $this->incidentRepo->update($binIncidentId, ['department_id' => $departmentId]);
     }
 }

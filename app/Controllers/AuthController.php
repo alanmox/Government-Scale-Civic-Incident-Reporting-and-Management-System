@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Request;
+use App\Core\Response;
 use App\Exceptions\AuthenticationException;
 use App\Exceptions\ValidationException;
 use App\Repositories\UserRepository;
@@ -16,14 +18,13 @@ final class AuthController extends BaseController
     private AuthValidator $validator;
 
     public function __construct(
-        \App\Core\Request $request, 
-        \App\Core\Response $response
+        Request $request, 
+        Response $response
     ) {
         parent::__construct($request, $response);
         
-        $userRepo = new UserRepository();
-        $this->authService = new AuthService($userRepo);
-        $this->validator   = new AuthValidator($userRepo);
+        $this->authService = new AuthService(new UserRepository());
+        $this->validator   = new AuthValidator(new UserRepository());
     }
 
     // ── Login ──────────────────────────────────────────────────────────────────
@@ -63,10 +64,9 @@ final class AuthController extends BaseController
             $this->redirect($intended);
 
         } catch (AuthenticationException $e) {
-            error_log('[AUTH DEBUG] AuthenticationException: ' . $e->getMessage());
             $this->redirectWithError('/login', $e->getMessage());
         } catch (\Throwable $e) {
-            error_log('[AUTH DEBUG] Throwable: ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            error_log('Login error: ' . $e->getMessage());
             $this->redirectWithError('/login', __('error.500_message'));
         }
     }

@@ -20,7 +20,7 @@ final class ApiAuthMiddleware implements MiddlewareInterface
 
     public function handle(Request $request, Response $response, callable $next): void
     {
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $authHeader = $request->header('Authorization', '');
 
         if (empty($authHeader) || !str_starts_with($authHeader, 'Bearer ')) {
             $response->apiError('Missing or invalid Authorization header.', null, 401);

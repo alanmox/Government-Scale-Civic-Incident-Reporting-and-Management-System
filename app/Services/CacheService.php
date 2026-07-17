@@ -129,7 +129,7 @@ final class CacheService
     private function delete(string $file): void
     {
         if (file_exists($file)) {
-            @unlink($file);
+            unlink($file);
         }
     }
 }

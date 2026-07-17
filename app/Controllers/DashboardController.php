@@ -2,10 +2,25 @@
 declare(strict_types=1);
 namespace App\Controllers;
 
+use App\Repositories\IncidentRepository;
+use App\Repositories\WorkOrderRepository;
+use App\Services\DashboardService;
 use App\Utilities\UUIDHelper;
 
 final class DashboardController extends BaseController
 {
+    private DashboardService $dashService;
+
+    public function __construct(
+        \App\Core\Request $request,
+        \App\Core\Response $response
+    ) {
+        parent::__construct($request, $response);
+        $incidentRepo = new IncidentRepository();
+        $woRepo = new WorkOrderRepository();
+        $this->dashService = new DashboardService($incidentRepo, $woRepo);
+    }
+
     public function index(): void
     {
         $this->requireAuth();
@@ -13,16 +28,12 @@ final class DashboardController extends BaseController
         $userBinId = $this->session->userId();
         $roleSlug = $this->session->get('user_role');
 
-        $incidentRepo = new \App\Repositories\IncidentRepository();
-        $woRepo = new \App\Repositories\WorkOrderRepository();
-        $dashService = new \App\Services\DashboardService($incidentRepo, $woRepo);
-
         if ($roleSlug === 'citizen') {
             $userId = UUIDHelper::toString($userBinId);
-            $stats = $dashService->getCitizenStats($userId);
+            $stats = $this->dashService->getCitizenStats($userId);
             $view = 'dashboard/citizen';
         } else {
-            $stats = $dashService->getSystemStats();
+            $stats = $this->dashService->getSystemStats();
             $view = 'dashboard/admin';
         }
 

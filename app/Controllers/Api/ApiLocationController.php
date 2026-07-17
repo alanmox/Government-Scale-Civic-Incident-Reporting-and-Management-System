@@ -27,42 +27,45 @@ final class ApiLocationController
 
     public function districts(Request $request, Response $response): void
     {
-        $regionId = $_GET['region_id'] ?? '';
+        $regionId = $request->query('region_id', '');
         if (empty($regionId)) {
             $response->apiError('region_id is required');
             return;
         }
 
-        $stmt = $this->pdo->prepare("SELECT HEX(id) as id, name FROM districts WHERE region_id = UNHEX(?) ORDER BY name ASC");
-        $stmt->execute([$regionId]);
+        $stmt = $this->pdo->prepare("SELECT HEX(id) as id, name FROM districts WHERE region_id = UNHEX(:regionId) ORDER BY name ASC");
+        $stmt->bindValue(':regionId', $regionId);
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $response->apiSuccess($data);
     }
 
     public function wards(Request $request, Response $response): void
     {
-        $districtId = $_GET['district_id'] ?? '';
+        $districtId = $request->query('district_id', '');
         if (empty($districtId)) {
             $response->apiError('district_id is required');
             return;
         }
 
-        $stmt = $this->pdo->prepare("SELECT HEX(id) as id, name FROM wards WHERE district_id = UNHEX(?) ORDER BY name ASC");
-        $stmt->execute([$districtId]);
+        $stmt = $this->pdo->prepare("SELECT HEX(id) as id, name FROM wards WHERE district_id = UNHEX(:districtId) ORDER BY name ASC");
+        $stmt->bindValue(':districtId', $districtId);
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $response->apiSuccess($data);
     }
 
     public function villages(Request $request, Response $response): void
     {
-        $wardId = $_GET['ward_id'] ?? '';
+        $wardId = $request->query('ward_id', '');
         if (empty($wardId)) {
             $response->apiError('ward_id is required');
             return;
         }
 
-        $stmt = $this->pdo->prepare("SELECT HEX(id) as id, name FROM villages WHERE ward_id = UNHEX(?) ORDER BY name ASC");
-        $stmt->execute([$wardId]);
+        $stmt = $this->pdo->prepare("SELECT HEX(id) as id, name FROM villages WHERE ward_id = UNHEX(:wardId) ORDER BY name ASC");
+        $stmt->bindValue(':wardId', $wardId);
+        $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $response->apiSuccess($data);
     }
