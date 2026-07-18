@@ -17,12 +17,14 @@ class Incident extends BaseModel
     protected function getFillable(): array
     {
         return [
-            'id', 'reference_number', 'citizen_id', 'category_id',
+            'id', 'uuid_str', 'reference_number', 'citizen_id', 'category_id',
+            'category_name', 'citizen_name',
             'title', 'description', 'priority', 'status', 'sub_status',
             'region_id', 'district_id', 'ward_id', 'village_id',
             'latitude', 'longitude', 'location_desc',
             'reported_at', 'sla_due_at', 'resolved_at',
             'agency_id', 'department_id', 'assigned_officer_id',
+            'assigned_officer_name',
             'is_public', 'created_at', 'updated_at', 'deleted_at', 'deleted_by'
         ];
     }

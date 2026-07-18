@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Exceptions\AppException;
+use App\Interfaces\MiddlewareInterface;
 
 /**
  * Router
@@ -171,7 +172,11 @@ final class Router
             if (!class_exists($middlewareClass)) {
                 throw new AppException("Middleware [{$middlewareClass}] not found.");
             }
-            $pipeline->pipe(new $middlewareClass());
+            $instance = new $middlewareClass();
+            if (!$instance instanceof MiddlewareInterface) {
+                throw new AppException("Middleware [{$middlewareClass}] must implement MiddlewareInterface.");
+            }
+            $pipeline->pipe($instance);
         }
 
         $pipeline->then(function () use ($handler): void {

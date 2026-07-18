@@ -17,7 +17,8 @@ class WorkOrder extends BaseModel
     protected function getFillable(): array
     {
         return [
-            'id', 'incident_id', 'officer_id', 'reference_number',
+            'id', 'uuid_str', 'incident_id', 'officer_id', 'reference_number',
+            'incident_ref', 'officer_name',
             'title', 'description', 'status', 'priority',
             'estimated_cost', 'actual_cost',
             'started_at', 'completed_at',

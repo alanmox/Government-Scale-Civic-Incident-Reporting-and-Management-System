@@ -17,7 +17,7 @@ return [
     'timezone'  => $_ENV['APP_TIMEZONE'] ?? 'Africa/Dar_es_Salaam',
     'locale'    => $_ENV['APP_LOCALE']   ?? 'en',
     'encryption_key' => $_ENV['APP_ENCRYPTION_KEY'] ?? (
-        filter_var($_ENV['APP_ENV'] ?? 'production', FILTER_VALIDATE_BOOL)
+        ($_ENV['APP_ENV'] ?? 'production') === 'production'
             ? throw new \RuntimeException('APP_ENCRYPTION_KEY must be set in production')
             : 'CHANGE_ME_IN_PRODUCTION'
     ),

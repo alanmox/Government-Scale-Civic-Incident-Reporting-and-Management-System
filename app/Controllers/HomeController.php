@@ -10,6 +10,9 @@ final class HomeController extends BaseController
             $this->redirect('/dashboard');
             return;
         }
-        $this->redirect('/login');
+
+        $this->view('home/index', [
+            'pageTitle' => __('app_name') . ' — ' . __('app_tagline'),
+        ]);
     }
 }
